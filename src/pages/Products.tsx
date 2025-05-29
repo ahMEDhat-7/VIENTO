@@ -4,16 +4,7 @@ import { useAppSelector } from '../hooks/useRedux';
 import ProductCard from '../components/ProductCard';
 
 const Products: React.FC = () => {
-  const products = useAppSelector(state => state.products.items);
-  const isLoading = useAppSelector(state => state.products.loading);
-
-  if (isLoading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">Loading products...</div>
-      </div>
-    );
-  }
+  const products = useAppSelector(state => state.products.filteredProducts);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
