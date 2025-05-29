@@ -1,25 +1,31 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { toggleCart } from '../store/cartSlice';
-import { Search, ShoppingCart, User, Heart } from 'lucide-react';
+import { logout } from '../store/userSlice';
+import { Search, ShoppingCart, User, Heart, LogOut } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const cartItems = useAppSelector(state => state.cart.items);
   const wishlistItems = useAppSelector(state => state.wishlist.items);
-  const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
+  const { isAuthenticated, currentUser } = useAppSelector(state => state.user);
   
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Navigate to search page with query
     console.log('Search for:', searchQuery);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
   };
 
   return (
@@ -90,9 +96,23 @@ const Header: React.FC = () => {
             </button>
 
             {/* User */}
-            <Link to={isAuthenticated ? "/dashboard" : "/login"} className="p-2 text-gray-600 hover:text-primary transition-colors">
-              <User className="w-6 h-6" />
-            </Link>
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-2">
+                <Link to="/dashboard" className="p-2 text-gray-600 hover:text-primary transition-colors">
+                  <User className="w-6 h-6" />
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-gray-600 hover:text-primary transition-colors"
+                >
+                  <LogOut className="w-6 h-6" />
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="p-2 text-gray-600 hover:text-primary transition-colors">
+                <User className="w-6 h-6" />
+              </Link>
+            )}
           </div>
         </div>
       </div>
