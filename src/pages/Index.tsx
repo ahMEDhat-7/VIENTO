@@ -1,24 +1,11 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import ProductCard from '../components/ProductCard';
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import { setProducts } from '../store/productsSlice';
-import { mockProducts } from '../data/mockProducts';
 import { ChevronRight, Star, Truck, Shield, RefreshCw } from 'lucide-react';
 
 const Index: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const products = useAppSelector(state => state.products.products);
-  
-  useEffect(() => {
-    dispatch(setProducts(mockProducts));
-  }, [dispatch]);
-
-  const trendingProducts = products.filter(p => p.isTrending).slice(0, 4);
-  const newProducts = products.filter(p => p.isNew).slice(0, 4);
   const categories = ['Baseball', 'Snapback', 'Bucket', 'Beanie', 'Trucker'];
 
   return (
@@ -123,98 +110,6 @@ const Index: React.FC = () => {
                   {category}
                 </h3>
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Trending Products with Enhanced Effects */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-10 right-10 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>
-          <div className="absolute bottom-10 left-10 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float animation-delay-2000"></div>
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-16">
-            <div>
-              <h2 className="text-5xl font-bold text-gray-900 mb-6 animate-fade-in">
-                <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Trending Now
-                </span>
-              </h2>
-              <p className="text-xl text-gray-600 animate-fade-in animation-delay-200">The most popular caps catching the wind</p>
-            </div>
-            <Link to="/products?trending=true">
-              <Button variant="outline" className="hover:scale-110 transition-all duration-500 border-2 hover:border-purple-600 hover:text-purple-600 shadow-lg hover:shadow-purple-200">
-                View All
-                <ChevronRight className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {trendingProducts.map((product, index) => (
-              <div 
-                key={product.id} 
-                className="animate-fade-in hover:scale-110 transition-all duration-500 group"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <div className="relative">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
-                  <div className="relative">
-                    <ProductCard
-                      product={product}
-                      onClick={() => window.location.href = `/product/${product.id}`}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* New Arrivals with Cool Effects */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-48 h-48 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-48 h-48 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-pulse animation-delay-1000"></div>
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-16">
-            <div>
-              <h2 className="text-5xl font-bold text-gray-900 mb-6 animate-fade-in">
-                <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                  New Arrivals
-                </span>
-              </h2>
-              <p className="text-xl text-gray-600 animate-fade-in animation-delay-200">Fresh styles riding the wind</p>
-            </div>
-            <Link to="/products?new=true">
-              <Button variant="outline" className="hover:scale-110 transition-all duration-500 border-2 hover:border-blue-600 hover:text-blue-600 shadow-lg hover:shadow-blue-200">
-                View All
-                <ChevronRight className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {newProducts.map((product, index) => (
-              <div 
-                key={product.id} 
-                className="animate-fade-in hover:scale-110 transition-all duration-500 group"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                <div className="relative">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
-                  <div className="relative">
-                    <ProductCard
-                      product={product}
-                      onClick={() => window.location.href = `/product/${product.id}`}
-                    />
-                  </div>
-                </div>
-              </div>
             ))}
           </div>
         </div>

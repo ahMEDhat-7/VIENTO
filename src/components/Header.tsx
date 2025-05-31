@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   const { isAuthenticated, currentUser } = useAppSelector(state => state.user);
   
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const isAdmin = isAuthenticated && currentUser?.email === 'admin@adhams-elephant.com';
+  const isAdmin = isAuthenticated && currentUser?.email === 'admin@viento.com';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
