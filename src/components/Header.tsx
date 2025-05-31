@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -17,6 +16,7 @@ const Header: React.FC = () => {
   const { isAuthenticated, currentUser } = useAppSelector(state => state.user);
   
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const isAdmin = isAuthenticated && currentUser?.email === 'admin@adhams-elephant.com';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +54,11 @@ const Header: React.FC = () => {
             <Link to="/about" className="text-gray-700 hover:text-primary transition-colors">
               About
             </Link>
+            {isAdmin && (
+              <Link to="/admin" className="text-gray-700 hover:text-primary transition-colors">
+                Admin
+              </Link>
+            )}
           </nav>
 
           {/* Search */}
