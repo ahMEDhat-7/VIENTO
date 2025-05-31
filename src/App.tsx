@@ -4,7 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from 'react';
 import { store } from './store/store';
 import Header from './components/Header';
 import CartSidebar from './components/CartSidebar';
@@ -21,6 +22,22 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Component to handle page transitions
+const PageWrapper = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Smooth scroll to top on route change
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
+
+  return (
+    <div className="animate-fade-in">
+      {children}
+    </div>
+  );
+};
+
 const App = () => (
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
@@ -28,23 +45,23 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <div className="min-h-screen bg-gray-100 flex justify-center">
-            <div className="w-full max-w-7xl bg-white shadow-lg">
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center transition-all duration-500">
+            <div className="w-full max-w-7xl bg-white shadow-2xl transition-shadow duration-500 hover:shadow-3xl">
               <Header />
               <CartSidebar />
-              <main>
+              <main className="relative overflow-hidden">
                 <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/categories" element={<Categories />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/wishlist" element={<Wishlist />} />
-                  <Route path="/admin" element={<Admin />} />
+                  <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
+                  <Route path="/products" element={<PageWrapper><Products /></PageWrapper>} />
+                  <Route path="/categories" element={<PageWrapper><Categories /></PageWrapper>} />
+                  <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+                  <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+                  <Route path="/signup" element={<PageWrapper><Signup /></PageWrapper>} />
+                  <Route path="/dashboard" element={<PageWrapper><Dashboard /></PageWrapper>} />
+                  <Route path="/wishlist" element={<PageWrapper><Wishlist /></PageWrapper>} />
+                  <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
+                  <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
                 </Routes>
               </main>
             </div>
