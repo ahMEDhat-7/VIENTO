@@ -16,8 +16,8 @@ const Admin: React.FC = () => {
   const cartItems = useAppSelector(state => state.cart.items);
   const orders = useAppSelector(state => state.user.orders);
 
-  // Simple admin check - in a real app, you'd check user roles
-  const isAdmin = isAuthenticated && currentUser?.email === 'admin@adhams-elephant.com';
+  // Simple admin check - updated to use VIENTO domain
+  const isAdmin = isAuthenticated && currentUser?.email === 'admin@viento.com';
 
   if (!isAdmin) {
     return (
@@ -32,7 +32,7 @@ const Admin: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-2">Manage your Adham's Elephant store</p>
+        <p className="text-gray-600 mt-2">Manage your VIENTO store</p>
       </div>
 
       {/* Stats Cards */}
