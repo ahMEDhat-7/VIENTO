@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { toggleCart } from '../store/cartSlice';
 import { logout } from '../store/userSlice';
+import { setFilters, applyFilters } from '../store/productsSlice';
 import { Search, ShoppingCart, User, Heart, LogOut } from 'lucide-react';
 
 const Header: React.FC = () => {
@@ -21,7 +22,11 @@ const Header: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Search for:', searchQuery);
+    if (searchQuery.trim()) {
+      // Navigate to products page and apply search filter
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      console.log('Search for:', searchQuery);
+    }
   };
 
   const handleLogout = () => {

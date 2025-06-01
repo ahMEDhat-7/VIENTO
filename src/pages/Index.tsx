@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChevronRight, Star, Truck, Shield, RefreshCw } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const Index: React.FC = () => {
   const categories = ['Baseball', 'Snapback', 'Bucket', 'Beanie', 'Trucker'];
@@ -183,6 +184,8 @@ const Index: React.FC = () => {
           </form>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 };
