@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
 import { setProducts } from '../../store/productsSlice';
@@ -9,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Upload, X } from 'lucide-react';
 import { Product } from '../../types/store';
 
 const AddProductForm: React.FC = () => {
@@ -33,11 +33,37 @@ const AddProductForm: React.FC = () => {
     reviewCount: '0'
   });
 
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+
   const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
   const availableColors = ['Black', 'White', 'Red', 'Blue', 'Green', 'Yellow', 'Gray', 'Navy', 'Brown'];
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result as string;
+          setUploadedImages(prev => [...prev, result]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Combine uploaded images with URL images
+    const allImages = [
+      ...uploadedImages,
+      ...formData.images.split(',').map(url => url.trim()).filter(url => url)
+    ];
 
     const newProduct: Product = {
       id: Date.now().toString(),
@@ -47,7 +73,7 @@ const AddProductForm: React.FC = () => {
       price: parseFloat(formData.price),
       originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
       description: formData.description,
-      images: formData.images.split(',').map(url => url.trim()),
+      images: allImages,
       sizes: formData.sizes,
       colors: formData.colors,
       isNew: formData.isNew,
@@ -56,8 +82,6 @@ const AddProductForm: React.FC = () => {
       reviewCount: parseInt(formData.reviewCount)
     };
 
-    // Here you would make an API call to your backend
-    // For now, we'll just add it to the Redux store
     const updatedProducts = [...products, newProduct];
     dispatch(setProducts(updatedProducts));
 
@@ -77,8 +101,8 @@ const AddProductForm: React.FC = () => {
       rating: '4.5',
       reviewCount: '0'
     });
+    setUploadedImages([]);
 
-    // TODO: Replace with actual API call
     console.log('Adding new product:', newProduct);
     alert('Product added successfully!');
   };
@@ -167,17 +191,6 @@ const AddProductForm: React.FC = () => {
                 onChange={(e) => setFormData(prev => ({ ...prev, originalPrice: e.target.value }))}
               />
             </div>
-
-            <div>
-              <Label htmlFor="images">Image URLs (comma separated)</Label>
-              <Input
-                id="images"
-                value={formData.images}
-                onChange={(e) => setFormData(prev => ({ ...prev, images: e.target.value }))}
-                placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                required
-              />
-            </div>
           </div>
 
           <div>
@@ -189,6 +202,63 @@ const AddProductForm: React.FC = () => {
               rows={3}
               required
             />
+          </div>
+
+          {/* Image Upload Section */}
+          <div className="space-y-4">
+            <Label>Product Images</Label>
+            
+            {/* Upload Button */}
+            <div className="flex items-center gap-4">
+              <Button type="button" variant="outline" className="flex items-center gap-2" asChild>
+                <label htmlFor="image-upload" className="cursor-pointer">
+                  <Upload className="h-4 w-4" />
+                  Upload Images
+                </label>
+              </Button>
+              <input
+                id="image-upload"
+                type="file"
+                multiple
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+              <span className="text-sm text-gray-500">or enter URLs below</span>
+            </div>
+
+            {/* Display Uploaded Images */}
+            {uploadedImages.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {uploadedImages.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={image}
+                      alt={`Upload ${index + 1}`}
+                      className="w-full h-24 object-cover rounded border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* URL Input */}
+            <div>
+              <Label htmlFor="images">Or enter Image URLs (comma separated)</Label>
+              <Input
+                id="images"
+                value={formData.images}
+                onChange={(e) => setFormData(prev => ({ ...prev, images: e.target.value }))}
+                placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+              />
+            </div>
           </div>
 
           <div>
