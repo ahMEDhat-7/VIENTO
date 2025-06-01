@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,15 +9,15 @@ const Index: React.FC = () => {
   const categories = ['Baseball', 'Snapback', 'Bucket', 'Beanie', 'Trucker'];
 
   return (
-    <div className="min-h-screen bg-black scroll-smooth">
+    <div className="min-h-screen bg-gray-900 scroll-smooth">
       {/* Cinematic Hero Section */}
-      <section className="relative bg-black text-white overflow-hidden min-h-screen flex items-center">
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden min-h-screen flex items-center">
         {/* Enhanced Animated Background Elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-96 h-96 bg-amber-500 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
-          <div className="absolute top-0 right-4 w-96 h-96 bg-yellow-500 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-20 w-96 h-96 bg-orange-500 rounded-full mix-blend-screen filter blur-3xl opacity-25 animate-blob animation-delay-4000"></div>
-          <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-red-500 rounded-full mix-blend-screen filter blur-2xl opacity-10 animate-blob animation-delay-1000"></div>
+          <div className="absolute top-10 left-10 w-96 h-96 bg-amber-500 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute top-0 right-4 w-96 h-96 bg-yellow-500 rounded-full mix-blend-screen filter blur-3xl opacity-25 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-20 w-96 h-96 bg-orange-500 rounded-full mix-blend-screen filter blur-3xl opacity-35 animate-blob animation-delay-4000"></div>
+          <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-red-500 rounded-full mix-blend-screen filter blur-2xl opacity-20 animate-blob animation-delay-1000"></div>
         </div>
         
         {/* Cinematic Particles */}
@@ -26,7 +25,7 @@ const Index: React.FC = () => {
           {[...Array(50)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-amber-400 rounded-full opacity-40 animate-float"
+              className="absolute w-1 h-1 bg-amber-400 rounded-full opacity-60 animate-float"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -38,8 +37,8 @@ const Index: React.FC = () => {
         </div>
 
         {/* Film Grain Effect */}
-        <div className="absolute inset-0 opacity-20 animate-pulse">
-          <div className="w-full h-full bg-gray-900 opacity-30" style={{
+        <div className="absolute inset-0 opacity-10 animate-pulse">
+          <div className="w-full h-full bg-gray-700 opacity-20" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E")`,
             backgroundSize: '200px 200px'
           }}></div>
@@ -49,11 +48,11 @@ const Index: React.FC = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `linear-gradient(45deg, rgba(0,0,0,0.8), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1920')`,
+            backgroundImage: `linear-gradient(45deg, rgba(55,65,81,0.6), rgba(75,85,99,0.4)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1920')`,
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-80"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900/60 via-transparent to-gray-900/60"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-800/20 to-gray-900/80"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 z-10">
@@ -91,13 +90,13 @@ const Index: React.FC = () => {
         </div>
 
         {/* Cinematic Vignette Effect */}
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-black opacity-60 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-gray-900/40 pointer-events-none"></div>
       </section>
 
       {/* Categories Section with Cinematic Feel */}
-      <section className="py-32 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-amber-900/20 to-orange-900/20"></div>
+      <section className="py-32 bg-gradient-to-b from-gray-900 to-gray-800 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-amber-900/30 to-orange-900/30"></div>
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
@@ -117,10 +116,10 @@ const Index: React.FC = () => {
               <Link
                 key={category}
                 to={`/products?category=${category}`}
-                className="group text-center p-10 bg-gradient-to-br from-gray-800/50 to-black/50 backdrop-blur-sm rounded-3xl hover:bg-gradient-to-br hover:from-amber-900/30 hover:to-orange-900/30 transition-all duration-700 transform hover:scale-110 hover:shadow-2xl hover:shadow-amber-500/30 animate-fade-in border border-gray-700/50 hover:border-amber-500/50"
+                className="group text-center p-10 bg-gradient-to-br from-gray-700/60 to-gray-800/60 backdrop-blur-sm rounded-3xl hover:bg-gradient-to-br hover:from-amber-900/40 hover:to-orange-900/40 transition-all duration-700 transform hover:scale-110 hover:shadow-2xl hover:shadow-amber-500/30 animate-fade-in border border-gray-600/50 hover:border-amber-500/50"
                 style={{ animationDelay: `${index * 200}ms` }}
               >
-                <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-amber-700/30 to-orange-700/30 rounded-full flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-amber-600/50 group-hover:to-orange-600/50 transition-all duration-700 group-hover:rotate-12 backdrop-blur-sm">
+                <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-amber-700/40 to-orange-700/40 rounded-full flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-amber-600/60 group-hover:to-orange-600/60 transition-all duration-700 group-hover:rotate-12 backdrop-blur-sm">
                   <span className="text-4xl transform group-hover:scale-125 transition-transform duration-700">🧢</span>
                 </div>
                 <h3 className="text-xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-amber-400 group-hover:to-orange-500 group-hover:bg-clip-text transition-all duration-700">
@@ -133,17 +132,17 @@ const Index: React.FC = () => {
       </section>
 
       {/* Enhanced Features Section - Cinematic */}
-      <section className="py-32 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+      <section className="py-32 bg-gradient-to-b from-gray-800 to-gray-700 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-amber-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-float"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-orange-600 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-float animation-delay-3000"></div>
+          <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-amber-600 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-float"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-orange-600 rounded-full mix-blend-screen filter blur-3xl opacity-25 animate-float animation-delay-3000"></div>
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             <div className="text-center animate-fade-in hover:scale-110 transition-all duration-700 group">
               <div className="relative w-32 h-32 mx-auto mb-10">
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full animate-pulse"></div>
-                <div className="absolute inset-3 bg-black rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-700 backdrop-blur-sm">
+                <div className="absolute inset-3 bg-gray-800 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-700 backdrop-blur-sm">
                   <Truck className="w-12 h-12 text-amber-400" />
                 </div>
               </div>
@@ -153,7 +152,7 @@ const Index: React.FC = () => {
             <div className="text-center animate-fade-in animation-delay-200 hover:scale-110 transition-all duration-700 group">
               <div className="relative w-32 h-32 mx-auto mb-10">
                 <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-amber-500 rounded-full animate-pulse"></div>
-                <div className="absolute inset-3 bg-black rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-700 backdrop-blur-sm">
+                <div className="absolute inset-3 bg-gray-800 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-700 backdrop-blur-sm">
                   <RefreshCw className="w-12 h-12 text-green-400" />
                 </div>
               </div>
@@ -163,7 +162,7 @@ const Index: React.FC = () => {
             <div className="text-center animate-fade-in animation-delay-400 hover:scale-110 transition-all duration-700 group">
               <div className="relative w-32 h-32 mx-auto mb-10">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-500 rounded-full animate-pulse"></div>
-                <div className="absolute inset-3 bg-black rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-700 backdrop-blur-sm">
+                <div className="absolute inset-3 bg-gray-800 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-700 backdrop-blur-sm">
                   <Shield className="w-12 h-12 text-orange-400" />
                 </div>
               </div>
@@ -175,11 +174,11 @@ const Index: React.FC = () => {
       </section>
 
       {/* Enhanced Newsletter Section - Cinematic */}
-      <section className="py-32 bg-gradient-to-r from-amber-900 via-orange-900 to-red-900 text-white relative overflow-hidden">
+      <section className="py-32 bg-gradient-to-r from-amber-800 via-orange-800 to-red-800 text-white relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-amber-900/60 to-orange-900/60 animate-pulse"></div>
-          <div className="absolute top-10 right-10 w-80 h-80 bg-yellow-400 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-float"></div>
-          <div className="absolute bottom-10 left-10 w-80 h-80 bg-red-400 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-float animation-delay-2000"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-amber-800/40 to-orange-800/40 animate-pulse"></div>
+          <div className="absolute top-10 right-10 w-80 h-80 bg-yellow-400 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-float"></div>
+          <div className="absolute bottom-10 left-10 w-80 h-80 bg-red-400 rounded-full mix-blend-screen filter blur-3xl opacity-25 animate-float animation-delay-2000"></div>
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-6xl font-bold mb-8 animate-fade-in">
@@ -192,7 +191,7 @@ const Index: React.FC = () => {
             <Input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 bg-black/30 backdrop-blur-md text-white placeholder-amber-200 border-amber-400/50 focus:bg-black/50 focus:border-yellow-400 transition-all duration-500 py-6 px-8 text-xl rounded-xl"
+              className="flex-1 bg-gray-800/50 backdrop-blur-md text-white placeholder-amber-200 border-amber-400/50 focus:bg-gray-800/70 focus:border-yellow-400 transition-all duration-500 py-6 px-8 text-xl rounded-xl"
             />
             <Button variant="secondary" className="hover:scale-110 transition-all duration-500 px-12 py-6 text-xl font-semibold shadow-2xl hover:shadow-yellow-400/30 bg-yellow-400 text-black hover:bg-yellow-300 rounded-xl">
               Subscribe
