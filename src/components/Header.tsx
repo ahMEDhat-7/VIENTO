@@ -23,8 +23,9 @@ const Header: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to products page and apply search filter
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      dispatch(setFilters({ search: searchQuery.trim() }));
+      dispatch(applyFilters());
+      navigate('/products');
       console.log('Search for:', searchQuery);
     }
   };
@@ -35,45 +36,46 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white/90 backdrop-blur-md shadow-lg border-b sticky top-0 z-50 transition-all duration-300">
+    <header className="bg-black/95 backdrop-blur-md shadow-2xl border-b border-gray-800 sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="relative w-10 h-10">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 rounded-xl rotate-12 group-hover:rotate-45 transition-transform duration-500"></div>
-              <div className="absolute inset-1 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-lg font-bold bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent">V</span>
-              </div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition-opacity duration-500"></div>
+          <Link to="/" className="flex items-center space-x-4 group">
+            <div className="relative w-16 h-12 overflow-hidden">
+              <img 
+                src="/lovable-uploads/466f019a-95c3-4fd5-b3e1-f2ac215565b6.png" 
+                alt="VIENTO Logo" 
+                className="w-full h-full object-contain filter brightness-110 group-hover:brightness-125 transition-all duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:animate-pulse"></div>
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
+            <span className="text-3xl font-bold text-white hover:text-transparent hover:bg-gradient-to-r hover:from-amber-200 hover:to-yellow-400 hover:bg-clip-text transition-all duration-500 transform group-hover:scale-105">
               VIENTO
             </span>
           </Link>
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-primary transition-all duration-300 hover:scale-110 relative group">
+            <Link to="/" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
               Home
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/products" className="text-gray-700 hover:text-primary transition-all duration-300 hover:scale-110 relative group">
+            <Link to="/products" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
               Shop
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/categories" className="text-gray-700 hover:text-primary transition-all duration-300 hover:scale-110 relative group">
+            <Link to="/categories" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
               Categories
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/about" className="text-gray-700 hover:text-primary transition-all duration-300 hover:scale-110 relative group">
+            <Link to="/about" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
               About
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             {isAdmin && (
-              <Link to="/admin" className="text-gray-700 hover:text-primary transition-all duration-300 hover:scale-110 relative group">
+              <Link to="/admin" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
                 Admin
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
               </Link>
             )}
           </nav>
@@ -81,13 +83,13 @@ const Header: React.FC = () => {
           {/* Search */}
           <form onSubmit={handleSearch} className="hidden md:flex items-center flex-1 max-w-md mx-8">
             <div className="relative w-full group">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 transition-colors group-focus-within:text-blue-600" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 transition-colors group-focus-within:text-amber-400" />
               <Input
                 type="text"
                 placeholder="Search caps and hats..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-50/50 border-gray-200 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all duration-300"
+                className="pl-10 bg-gray-900/50 border-gray-700 text-white placeholder-gray-400 focus:bg-gray-800/70 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all duration-300"
               />
             </div>
           </form>
@@ -95,7 +97,7 @@ const Header: React.FC = () => {
           {/* Actions */}
           <div className="flex items-center space-x-4">
             {/* Wishlist */}
-            <Link to="/wishlist" className="relative p-2 text-gray-600 hover:text-primary transition-all duration-300 hover:scale-110 group">
+            <Link to="/wishlist" className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group">
               <Heart className="w-6 h-6" />
               {wishlistItems.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
@@ -108,36 +110,36 @@ const Header: React.FC = () => {
             {/* Cart */}
             <button
               onClick={() => dispatch(toggleCart())}
-              className="relative p-2 text-gray-600 hover:text-primary transition-all duration-300 hover:scale-110 group"
+              className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group"
             >
               <ShoppingCart className="w-6 h-6" />
               {cartItemsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce">
+                <span className="absolute -top-1 -right-1 bg-amber-500 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce font-bold">
                   {cartItemsCount}
                 </span>
               )}
-              <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </button>
 
             {/* User */}
             {isAuthenticated ? (
               <div className="flex items-center space-x-2">
-                <Link to="/dashboard" className="p-2 text-gray-600 hover:text-primary transition-all duration-300 hover:scale-110 group relative">
+                <Link to="/dashboard" className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative">
                   <User className="w-6 h-6" />
                   <div className="absolute -inset-2 bg-gradient-to-r from-green-600 to-blue-600 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="p-2 text-gray-600 hover:text-red-600 transition-all duration-300 hover:scale-110 group relative"
+                  className="p-3 text-gray-400 hover:text-red-400 transition-all duration-300 hover:scale-110 group relative"
                 >
                   <LogOut className="w-6 h-6" />
                   <div className="absolute -inset-2 bg-gradient-to-r from-red-600 to-pink-600 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="p-2 text-gray-600 hover:text-primary transition-all duration-300 hover:scale-110 group relative">
+              <Link to="/login" className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative">
                 <User className="w-6 h-6" />
-                <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
               </Link>
             )}
           </div>

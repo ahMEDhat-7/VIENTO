@@ -45,8 +45,8 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center transition-all duration-500">
-            <div className="w-full max-w-7xl bg-white shadow-2xl transition-shadow duration-500 hover:shadow-3xl">
+          <div className="min-h-screen bg-black flex justify-center transition-all duration-500">
+            <div className="w-full bg-black shadow-2xl transition-shadow duration-500">
               <Header />
               <CartSidebar />
               <main className="relative overflow-hidden">
