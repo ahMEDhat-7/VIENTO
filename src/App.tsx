@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from 'react';
 import { store } from './store/store';
+import { DarkModeProvider } from './contexts/DarkModeContext';
 import Header from './components/Header';
 import CartSidebar from './components/CartSidebar';
 import Index from "./pages/Index";
@@ -42,31 +43,33 @@ const App = () => (
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="min-h-screen bg-black flex justify-center transition-all duration-500">
-            <div className="w-full bg-black shadow-2xl transition-shadow duration-500">
-              <Header />
-              <CartSidebar />
-              <main className="relative overflow-hidden">
-                <Routes>
-                  <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
-                  <Route path="/products" element={<PageWrapper><Products /></PageWrapper>} />
-                  <Route path="/categories" element={<PageWrapper><Categories /></PageWrapper>} />
-                  <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
-                  <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
-                  <Route path="/signup" element={<PageWrapper><Signup /></PageWrapper>} />
-                  <Route path="/dashboard" element={<PageWrapper><Dashboard /></PageWrapper>} />
-                  <Route path="/wishlist" element={<PageWrapper><Wishlist /></PageWrapper>} />
-                  <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
-                </Routes>
-              </main>
+        <DarkModeProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="min-h-screen bg-black flex justify-center transition-all duration-500">
+              <div className="w-full bg-black shadow-2xl transition-shadow duration-500">
+                <Header />
+                <CartSidebar />
+                <main className="relative overflow-hidden">
+                  <Routes>
+                    <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
+                    <Route path="/products" element={<PageWrapper><Products /></PageWrapper>} />
+                    <Route path="/categories" element={<PageWrapper><Categories /></PageWrapper>} />
+                    <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+                    <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+                    <Route path="/signup" element={<PageWrapper><Signup /></PageWrapper>} />
+                    <Route path="/dashboard" element={<PageWrapper><Dashboard /></PageWrapper>} />
+                    <Route path="/wishlist" element={<PageWrapper><Wishlist /></PageWrapper>} />
+                    <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+                  </Routes>
+                </main>
+              </div>
             </div>
-          </div>
-        </BrowserRouter>
+          </BrowserRouter>
+        </DarkModeProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </Provider>

@@ -4,16 +4,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Moon, Sun } from 'lucide-react';
 import { useAppDispatch } from '../hooks/useRedux';
+import { useDarkMode } from '../contexts/DarkModeContext';
 import { login } from '../store/userSlice';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode } = useDarkMode();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -34,20 +33,8 @@ const Login: React.FC = () => {
     }, 1000);
   };
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
-
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Dark Mode Toggle */}
-      <div className="absolute top-4 right-4 flex items-center space-x-2">
-        <Sun className={`h-4 w-4 ${isDarkMode ? 'text-gray-400' : 'text-yellow-500'}`} />
-        <Switch checked={isDarkMode} onCheckedChange={toggleDarkMode} />
-        <Moon className={`h-4 w-4 ${isDarkMode ? 'text-blue-400' : 'text-gray-400'}`} />
-      </div>
-
       <div className="max-w-md mx-auto px-4 py-16">
         <div className={`p-8 rounded-lg shadow-md transition-colors duration-300 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="text-center mb-8">

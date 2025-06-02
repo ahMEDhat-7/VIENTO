@@ -7,12 +7,14 @@ import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
 import { toggleCart } from '../store/cartSlice';
 import { logout } from '../store/userSlice';
 import { setFilters, applyFilters } from '../store/productsSlice';
-import { Search, ShoppingCart, User, Heart, LogOut } from 'lucide-react';
+import { useDarkMode } from '../contexts/DarkModeContext';
+import { Search, ShoppingCart, User, Heart, LogOut, Moon, Sun } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const cartItems = useAppSelector(state => state.cart.items);
   const wishlistItems = useAppSelector(state => state.wishlist.items);
   const { isAuthenticated, currentUser } = useAppSelector(state => state.user);
@@ -96,6 +98,19 @@ const Header: React.FC = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative"
+            >
+              {isDarkMode ? (
+                <Sun className="w-6 h-6" />
+              ) : (
+                <Moon className="w-6 h-6" />
+              )}
+              <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+            </button>
+
             {/* Wishlist */}
             <Link to="/wishlist" className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group">
               <Heart className="w-6 h-6" />
