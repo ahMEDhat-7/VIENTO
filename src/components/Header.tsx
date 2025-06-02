@@ -42,18 +42,15 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-4 group">
-            <div className="relative w-16 h-12 overflow-hidden">
+          <Link to="/" className="flex items-center group">
+            <div className="relative w-16 h-16 overflow-hidden rounded-full">
               <img 
                 src="/lovable-uploads/466f019a-95c3-4fd5-b3e1-f2ac215565b6.png" 
-                alt="VIENTO Logo" 
-                className="w-full h-full object-contain filter brightness-110 group-hover:brightness-125 transition-all duration-500 group-hover:scale-110"
+                alt="Logo" 
+                className="w-full h-full object-cover filter brightness-110 group-hover:brightness-125 transition-all duration-500 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:animate-pulse rounded-full"></div>
             </div>
-            <span className="text-3xl font-bold text-white hover:text-transparent hover:bg-gradient-to-r hover:from-amber-200 hover:to-yellow-400 hover:bg-clip-text transition-all duration-500 transform group-hover:scale-105">
-              VIENTO
-            </span>
           </Link>
 
           {/* Navigation */}
