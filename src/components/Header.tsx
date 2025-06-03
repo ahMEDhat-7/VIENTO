@@ -44,35 +44,49 @@ const Header: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center group">
             <div className="relative w-16 h-16 overflow-hidden rounded-full">
-              <img 
-                src="/lovable-uploads/466f019a-95c3-4fd5-b3e1-f2ac215565b6.png" 
-                alt="Logo" 
-                className="w-full h-full object-cover filter brightness-110 group-hover:brightness-125 transition-all duration-500 group-hover:scale-110"
+              <img
+                src="../../public/favicon.ico"
+                alt="Logo"
+                className="w-full h-full object-cover filter brightness-100 group-hover:brightness-100 transition-all duration-500 group-hover:scale-10"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:animate-pulse rounded-full"></div>
             </div>
           </Link>
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
+            <Link
+              to="/"
+              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
+            >
               Home
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/products" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
+            <Link
+              to="/products"
+              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
+            >
               Shop
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/categories" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
+            <Link
+              to="/categories"
+              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
+            >
               Categories
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link to="/about" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
+            <Link
+              to="/about"
+              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
+            >
               About
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             {isAdmin && (
-              <Link to="/admin" className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium">
+              <Link
+                to="/admin"
+                className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
+              >
                 Admin
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
               </Link>
@@ -80,7 +94,10 @@ const Header: React.FC = () => {
           </nav>
 
           {/* Search */}
-          <form onSubmit={handleSearch} className="hidden md:flex items-center flex-1 max-w-md mx-8">
+          <form
+            onSubmit={handleSearch}
+            className="hidden md:flex items-center flex-1 max-w-md mx-8"
+          >
             <div className="relative w-full group">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 transition-colors group-focus-within:text-amber-400" />
               <Input
@@ -109,7 +126,10 @@ const Header: React.FC = () => {
             </button>
 
             {/* Wishlist */}
-            <Link to="/wishlist" className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group">
+            <Link
+              to="/wishlist"
+              className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group"
+            >
               <Heart className="w-6 h-6" />
               {wishlistItems.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
@@ -136,7 +156,10 @@ const Header: React.FC = () => {
             {/* User */}
             {isAuthenticated ? (
               <div className="flex items-center space-x-2">
-                <Link to="/dashboard" className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative">
+                <Link
+                  to="/dashboard"
+                  className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative"
+                >
                   <User className="w-6 h-6" />
                   <div className="absolute -inset-2 bg-gradient-to-r from-green-600 to-blue-600 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </Link>
@@ -149,7 +172,10 @@ const Header: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative">
+              <Link
+                to="/login"
+                className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative"
+              >
                 <User className="w-6 h-6" />
                 <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
               </Link>
