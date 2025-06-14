@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { useAppSelector } from '../hooks/useRedux';
+import { useWishlistStore } from '../stores/useWishlistStore';
 import ProductCard from '../components/ProductCard';
 import { Heart } from 'lucide-react';
 
 const Wishlist: React.FC = () => {
-  const wishlistItems = useAppSelector(state => state.wishlist.items);
+  const { items: wishlistItems } = useWishlistStore();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">

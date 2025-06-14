@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { useAppSelector } from '../hooks/useRedux';
+import { useProductsStore } from '../stores/useProductsStore';
 import ProductCard from '../components/ProductCard';
 
 const Products: React.FC = () => {
-  const products = useAppSelector(state => state.products.filteredProducts);
+  const { filteredProducts: products } = useProductsStore();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">

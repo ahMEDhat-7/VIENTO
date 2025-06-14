@@ -3,21 +3,22 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
-import { toggleCart } from '../store/cartSlice';
-import { logout } from '../store/userSlice';
-import { setFilters, applyFilters } from '../store/productsSlice';
+import { useCartStore } from '../stores/useCartStore';
+import { useWishlistStore } from '../stores/useWishlistStore';
+import { useUserStore } from '../stores/useUserStore';
+import { useProductsStore } from '../stores/useProductsStore';
 import { useDarkMode } from '../contexts/DarkModeContext';
 import { Search, ShoppingCart, User, Heart, LogOut, Moon, Sun } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const cartItems = useAppSelector(state => state.cart.items);
-  const wishlistItems = useAppSelector(state => state.wishlist.items);
-  const { isAuthenticated, currentUser } = useAppSelector(state => state.user);
+  
+  const { items: cartItems, toggleCart } = useCartStore();
+  const { items: wishlistItems } = useWishlistStore();
+  const { isAuthenticated, currentUser, logout } = useUserStore();
+  const { setFilters, applyFilters } = useProductsStore();
   
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const isAdmin = isAuthenticated && currentUser?.email === 'admin@viento.com';
@@ -25,15 +26,15 @@ const Header: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      dispatch(setFilters({ search: searchQuery.trim() }));
-      dispatch(applyFilters());
+      setFilters({ search: searchQuery.trim() });
+      applyFilters();
       navigate('/products');
       console.log('Search for:', searchQuery);
     }
   };
 
   const handleLogout = () => {
-    dispatch(logout());
+    logout();
     navigate('/');
   };
 
@@ -43,11 +44,11 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <div className="relative w-16 h-16 overflow-hidden rounded-full">
+            <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-amber-300">
               <img
                 src="../../public/favicon.ico"
                 alt="Logo"
-                className="w-full h-full object-cover filter brightness-100 group-hover:brightness-100 transition-all duration-500 group-hover:scale-10"
+                className="w-full h-full object-cover filter brightness-100 group-hover:brightness-100 transition-all duration-500 group-hover:scale-110"
               />
             </div>
           </Link>
@@ -141,7 +142,7 @@ const Header: React.FC = () => {
 
             {/* Cart */}
             <button
-              onClick={() => dispatch(toggleCart())}
+              onClick={toggleCart}
               className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group"
             >
               <ShoppingCart className="w-6 h-6" />

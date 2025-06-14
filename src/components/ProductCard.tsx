@@ -2,9 +2,8 @@
 import React from 'react';
 import { Product } from '../types/store';
 import { Button } from '@/components/ui/button';
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import { addToCart } from '../store/cartSlice';
-import { addToWishlist, removeFromWishlist } from '../store/wishlistSlice';
+import { useCartStore } from '../stores/useCartStore';
+import { useWishlistStore } from '../stores/useWishlistStore';
 import { ShoppingCart, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,20 +13,15 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
-  const dispatch = useAppDispatch();
   const { toast } = useToast();
-  const wishlistItems = useAppSelector(state => state.wishlist.items);
+  const { addToCart } = useCartStore();
+  const { items: wishlistItems, addToWishlist, removeFromWishlist } = useWishlistStore();
   
   const isInWishlist = wishlistItems.some(item => item.product.id === product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch(addToCart({
-      product,
-      size: product.sizes[0],
-      color: product.colors[0],
-      quantity: 1
-    }));
+    addToCart(product, product.sizes[0], product.colors[0], 1);
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart.`,
@@ -37,13 +31,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isInWishlist) {
-      dispatch(removeFromWishlist(product.id));
+      removeFromWishlist(product.id);
       toast({
         title: "Removed from wishlist",
         description: `${product.name} has been removed from your wishlist.`,
       });
     } else {
-      dispatch(addToWishlist(product));
+      addToWishlist(product);
       toast({
         title: "Added to wishlist",
         description: `${product.name} has been added to your wishlist.`,

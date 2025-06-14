@@ -1,21 +1,19 @@
 
 import React from 'react';
-import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
-import { toggleCart, removeFromCart, updateQuantity } from '../store/cartSlice';
+import { useCartStore } from '../stores/useCartStore';
 import { Button } from '@/components/ui/button';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 
 const CartSidebar: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { items, isOpen } = useAppSelector(state => state.cart);
+  const { items, isOpen, toggleCart, removeFromCart, updateQuantity } = useCartStore();
 
   const total = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
 
   const handleUpdateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity === 0) {
-      dispatch(removeFromCart(id));
+      removeFromCart(id);
     } else {
-      dispatch(updateQuantity({ id, quantity: newQuantity }));
+      updateQuantity(id, newQuantity);
     }
   };
 
@@ -23,12 +21,12 @@ const CartSidebar: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
-      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => dispatch(toggleCart())} />
+      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={toggleCart} />
       <div className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl">
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b px-4 py-6">
             <h2 className="text-lg font-medium text-gray-900">Shopping Cart</h2>
-            <button onClick={() => dispatch(toggleCart())} className="text-gray-400 hover:text-gray-500">
+            <button onClick={toggleCart} className="text-gray-400 hover:text-gray-500">
               <X className="h-6 w-6" />
             </button>
           </div>
