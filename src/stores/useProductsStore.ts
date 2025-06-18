@@ -22,9 +22,44 @@ interface ProductsState {
   applyFilters: () => void;
 }
 
+// Sample products to get started
+const sampleProducts: Product[] = [
+  {
+    id: '1',
+    name: 'Classic Baseball Cap',
+    brand: 'Nike',
+    category: 'Baseball',
+    price: 29.99,
+    originalPrice: 39.99,
+    description: 'A classic baseball cap perfect for everyday wear.',
+    images: ['https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400'],
+    sizes: ['One Size'],
+    colors: ['Black', 'White', 'Navy'],
+    isNew: true,
+    isTrending: false,
+    rating: 4.5,
+    reviewCount: 125
+  },
+  {
+    id: '2',
+    name: 'Premium Snapback',
+    brand: 'New Era',
+    category: 'Snapback',
+    price: 49.99,
+    description: 'High-quality snapback with premium materials.',
+    images: ['https://images.unsplash.com/photo-1575428652377-a2d80e2277fc?w=400'],
+    sizes: ['One Size'],
+    colors: ['Black', 'Gray'],
+    isNew: false,
+    isTrending: true,
+    rating: 4.8,
+    reviewCount: 89
+  }
+];
+
 export const useProductsStore = create<ProductsState>((set, get) => ({
-  products: [],
-  filteredProducts: [],
+  products: sampleProducts,
+  filteredProducts: sampleProducts,
   categories: ['Baseball', 'Snapback', 'Bucket', 'Beanie', 'Trucker'],
   brands: ['Nike', 'Adidas', 'New Era', 'Mitchell & Ness', 'Patagonia'],
   filters: {

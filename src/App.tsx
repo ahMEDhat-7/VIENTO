@@ -8,6 +8,7 @@ import Header from './components/Header';
 import CartSidebar from './components/CartSidebar';
 import Index from "./pages/Index";
 import Products from "./pages/Products";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/admin" element={<Admin />} />
             </Routes>
           </main>
         </div>

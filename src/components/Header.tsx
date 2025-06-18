@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCartStore } from '../stores/useCartStore';
 import { useProductsStore } from '../stores/useProductsStore';
-import { Search, ShoppingCart } from 'lucide-react';
+import { Search, ShoppingCart, Settings } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,6 +55,13 @@ const Header: React.FC = () => {
               className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
             >
               Shop
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+            <Link
+              to="/admin"
+              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
+            >
+              <Settings className="w-5 h-5" />
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
           </nav>
