@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/useRedux';
-import { setProducts } from '../../store/productsSlice';
+import { useProductsStore } from '../../stores/useProductsStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,10 +11,7 @@ import { Upload, X } from 'lucide-react';
 import { Product } from '../../types/store';
 
 const AddProductForm: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const products = useAppSelector(state => state.products.products);
-  const categories = useAppSelector(state => state.products.categories);
-  const brands = useAppSelector(state => state.products.brands);
+  const { products, categories, brands, setProducts } = useProductsStore();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -83,7 +79,7 @@ const AddProductForm: React.FC = () => {
     };
 
     const updatedProducts = [...products, newProduct];
-    dispatch(setProducts(updatedProducts));
+    setProducts(updatedProducts);
 
     // Reset form
     setFormData({

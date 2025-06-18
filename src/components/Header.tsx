@@ -4,24 +4,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCartStore } from '../stores/useCartStore';
-import { useWishlistStore } from '../stores/useWishlistStore';
-import { useUserStore } from '../stores/useUserStore';
 import { useProductsStore } from '../stores/useProductsStore';
-import { useDarkMode } from '../contexts/DarkModeContext';
-import { Search, ShoppingCart, User, Heart, LogOut, Moon, Sun } from 'lucide-react';
+import { Search, ShoppingCart } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const { isDarkMode, toggleDarkMode } = useDarkMode();
   
   const { items: cartItems, toggleCart } = useCartStore();
-  const { items: wishlistItems } = useWishlistStore();
-  const { isAuthenticated, currentUser, logout } = useUserStore();
   const { setFilters, applyFilters } = useProductsStore();
   
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const isAdmin = isAuthenticated && currentUser?.email === 'admin@viento.com';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +24,6 @@ const Header: React.FC = () => {
       navigate('/products');
       console.log('Search for:', searchQuery);
     }
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
   };
 
   return (
@@ -69,29 +57,6 @@ const Header: React.FC = () => {
               Shop
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link
-              to="/categories"
-              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
-            >
-              Categories
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-            <Link
-              to="/about"
-              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
-            >
-              About
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
-              >
-                Admin
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            )}
           </nav>
 
           {/* Search */}
@@ -111,36 +76,8 @@ const Header: React.FC = () => {
             </div>
           </form>
 
-          {/* Actions */}
+          {/* Cart */}
           <div className="flex items-center space-x-4">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={toggleDarkMode}
-              className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative"
-            >
-              {isDarkMode ? (
-                <Sun className="w-6 h-6" />
-              ) : (
-                <Moon className="w-6 h-6" />
-              )}
-              <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            </button>
-
-            {/* Wishlist */}
-            <Link
-              to="/wishlist"
-              className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group"
-            >
-              <Heart className="w-6 h-6" />
-              {wishlistItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-                  {wishlistItems.length}
-                </span>
-              )}
-              <div className="absolute -inset-2 bg-gradient-to-r from-pink-600 to-red-600 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            </Link>
-
-            {/* Cart */}
             <button
               onClick={toggleCart}
               className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group"
@@ -153,34 +90,6 @@ const Header: React.FC = () => {
               )}
               <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </button>
-
-            {/* User */}
-            {isAuthenticated ? (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to="/dashboard"
-                  className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative"
-                >
-                  <User className="w-6 h-6" />
-                  <div className="absolute -inset-2 bg-gradient-to-r from-green-600 to-blue-600 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="p-3 text-gray-400 hover:text-red-400 transition-all duration-300 hover:scale-110 group relative"
-                >
-                  <LogOut className="w-6 h-6" />
-                  <div className="absolute -inset-2 bg-gradient-to-r from-red-600 to-pink-600 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                className="p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group relative"
-              >
-                <User className="w-6 h-6" />
-                <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-              </Link>
-            )}
           </div>
         </div>
       </div>

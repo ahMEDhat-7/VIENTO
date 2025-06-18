@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '../../hooks/useRedux';
-import { setProducts } from '../../store/productsSlice';
+import { useProductsStore } from '../../stores/useProductsStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,8 +10,7 @@ import { Product } from '../../types/store';
 import EditProductModal from './EditProductModal';
 
 const ProductManagement: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const products = useAppSelector(state => state.products.products);
+  const { products, setProducts } = useProductsStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
@@ -24,12 +22,9 @@ const ProductManagement: React.FC = () => {
 
   const handleDeleteProduct = async (productId: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      // Here you would make an API call to your backend
-      // For now, we'll just remove it from the Redux store
       const updatedProducts = products.filter(p => p.id !== productId);
-      dispatch(setProducts(updatedProducts));
+      setProducts(updatedProducts);
       
-      // TODO: Replace with actual API call
       console.log('Deleting product:', productId);
     }
   };
@@ -39,15 +34,12 @@ const ProductManagement: React.FC = () => {
   };
 
   const handleUpdateProduct = (updatedProduct: Product) => {
-    // Here you would make an API call to your backend
-    // For now, we'll just update it in the Redux store
     const updatedProducts = products.map(p => 
       p.id === updatedProduct.id ? updatedProduct : p
     );
-    dispatch(setProducts(updatedProducts));
+    setProducts(updatedProducts);
     setEditingProduct(null);
     
-    // TODO: Replace with actual API call
     console.log('Updating product:', updatedProduct);
   };
 
