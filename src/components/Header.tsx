@@ -1,31 +1,18 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useCartStore } from '../stores/useCartStore';
-import { useProductsStore } from '../stores/useProductsStore';
-import { Search, ShoppingCart, Settings, LogOut, User } from 'lucide-react';
+import { ShoppingCart, Settings, LogOut, User } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const Header: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   
   const { items: cartItems, toggleCart } = useCartStore();
-  const { setFilters, applyFilters } = useProductsStore();
   const { user, logout } = useAuth();
   
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setFilters({ search: searchQuery.trim() });
-      applyFilters();
-      navigate('/products');
-      console.log('Search for:', searchQuery);
-    }
-  };
 
   const handleLogout = () => {
     logout();
@@ -48,7 +35,7 @@ const Header: React.FC = () => {
           </Link>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="flex items-center space-x-8">
             <Link
               to="/"
               className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
@@ -73,23 +60,6 @@ const Header: React.FC = () => {
               </Link>
             )}
           </nav>
-
-          {/* Search */}
-          <form
-            onSubmit={handleSearch}
-            className="hidden md:flex items-center flex-1 max-w-md mx-8"
-          >
-            <div className="relative w-full group">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 transition-colors group-focus-within:text-amber-400" />
-              <Input
-                type="text"
-                placeholder="Search caps and hats..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-900/50 border-gray-700 text-white placeholder-gray-400 focus:bg-gray-800/70 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all duration-300"
-              />
-            </div>
-          </form>
 
           {/* Auth & Cart */}
           <div className="flex items-center space-x-4">
