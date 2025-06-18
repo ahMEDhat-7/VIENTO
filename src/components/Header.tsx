@@ -1,11 +1,11 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCartStore } from '../stores/useCartStore';
 import { useProductsStore } from '../stores/useProductsStore';
-import { Search, ShoppingCart, Settings } from 'lucide-react';
+import { Search, ShoppingCart, Settings, LogOut, User } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,6 +13,7 @@ const Header: React.FC = () => {
   
   const { items: cartItems, toggleCart } = useCartStore();
   const { setFilters, applyFilters } = useProductsStore();
+  const { user, logout } = useAuth();
   
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -24,6 +25,11 @@ const Header: React.FC = () => {
       navigate('/products');
       console.log('Search for:', searchQuery);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -57,13 +63,15 @@ const Header: React.FC = () => {
               Shop
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
-            <Link
-              to="/admin"
-              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
-            >
-              <Settings className="w-5 h-5" />
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
-            </Link>
+            {user?.role === 'admin' && (
+              <Link
+                to="/admin"
+                className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
+              >
+                <Settings className="w-5 h-5" />
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            )}
           </nav>
 
           {/* Search */}
@@ -83,8 +91,38 @@ const Header: React.FC = () => {
             </div>
           </form>
 
-          {/* Cart */}
+          {/* Auth & Cart */}
           <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-300 text-sm">
+                  <User className="w-4 h-4 inline mr-1" />
+                  {user.name || user.email}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-400 hover:text-amber-300 transition-all duration-300"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Link
+                  to="/login"
+                  className="text-gray-300 hover:text-amber-300 transition-all duration-300 text-sm"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-amber-500 text-black px-3 py-1 rounded text-sm hover:bg-amber-400 transition-all duration-300"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+            
             <button
               onClick={toggleCart}
               className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group"
