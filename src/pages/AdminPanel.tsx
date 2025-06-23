@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -65,6 +64,8 @@ const AdminPanel: React.FC = () => {
       sizes: productForm.sizes,
       colors: productForm.colors,
       stock: productForm.stock ? parseInt(productForm.stock) : 0,
+      rating: 0,
+      reviewCount: 0,
     });
 
     setProductForm({
