@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuthStore } from '../stores/useAuthStore';
+import { useToast } from '@/hooks/use-toast';
 
 const Signup: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,70 +17,103 @@ const Signup: React.FC = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    phone: '',
+    address: '',
     isAdmin: false,
-    adminCode: ''
   });
   
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { register } = useAuthStore();
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Signup:', formData);
     
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match",
+        variant: "destructive",
+      });
       return;
     }
     
-    if (formData.isAdmin && formData.adminCode !== 'ADMIN123') {
-      alert('Invalid admin code');
-      return;
-    }
+    const success = await register({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      role: formData.isAdmin ? 'admin' : 'user',
+      password: formData.password,
+    });
     
-    // Simple mock registration
-    if (formData.email && formData.password && formData.name) {
-      const user = {
-        email: formData.email,
-        name: formData.name,
-        role: formData.isAdmin ? 'admin' : 'user'
-      };
-      
-      localStorage.setItem('user', JSON.stringify(user));
-      navigate(formData.isAdmin ? '/admin' : '/');
+    if (success) {
+      toast({
+        title: "Account created",
+        description: "Welcome to VIENTO!",
+      });
+      navigate('/');
+    } else {
+      toast({
+        title: "Signup failed",
+        description: "Please try again",
+        variant: "destructive",
+      });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <Card>
+        <Card className="bg-gray-800/50 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">Sign Up</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center text-white">Join VIENTO</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignup} className="space-y-4">
               <div>
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name" className="text-gray-300">Full Name</Label>
                 <Input
                   id="name"
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   required
+                  className="bg-gray-700 border-gray-600 text-white"
                 />
               </div>
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-gray-300">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   required
+                  className="bg-gray-700 border-gray-600 text-white"
                 />
               </div>
               <div>
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="phone" className="text-gray-300">Phone (Optional)</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  className="bg-gray-700 border-gray-600 text-white"
+                />
+              </div>
+              <div>
+                <Label htmlFor="address" className="text-gray-300">Address (Optional)</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                  className="bg-gray-700 border-gray-600 text-white"
+                />
+              </div>
+              <div>
+                <Label htmlFor="password" className="text-gray-300">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -86,10 +121,11 @@ const Signup: React.FC = () => {
                     value={formData.password}
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                     required
+                    className="bg-gray-700 border-gray-600 text-white"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -97,7 +133,7 @@ const Signup: React.FC = () => {
                 </div>
               </div>
               <div>
-                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Label htmlFor="confirm-password" className="text-gray-300">Confirm Password</Label>
                 <div className="relative">
                   <Input
                     id="confirm-password"
@@ -105,10 +141,11 @@ const Signup: React.FC = () => {
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                     required
+                    className="bg-gray-700 border-gray-600 text-white"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -121,34 +158,22 @@ const Signup: React.FC = () => {
                   type="checkbox"
                   checked={formData.isAdmin}
                   onChange={(e) => setFormData(prev => ({ ...prev, isAdmin: e.target.checked }))}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-600 rounded bg-gray-700"
                 />
-                <Label htmlFor="admin-checkbox" className="ml-2 block text-sm text-gray-900">
+                <Label htmlFor="admin-checkbox" className="ml-2 block text-sm text-gray-300">
                   Sign up as Admin
                 </Label>
               </div>
-              {formData.isAdmin && (
-                <div>
-                  <Label htmlFor="admin-code">Admin Code</Label>
-                  <Input
-                    id="admin-code"
-                    type="text"
-                    value={formData.adminCode}
-                    onChange={(e) => setFormData(prev => ({ ...prev, adminCode: e.target.value }))}
-                    placeholder="Enter admin code"
-                    required
-                  />
-                </div>
-              )}
-              <Button type="submit" className="w-full">
-                Sign Up
+              
+              <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold">
+                Create Account
               </Button>
             </form>
             
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-400">
                 Already have an account?{' '}
-                <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link to="/login" className="font-medium text-amber-400 hover:text-amber-300">
                   Sign in
                 </Link>
               </p>

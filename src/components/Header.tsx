@@ -3,16 +3,16 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '../stores/useCartStore';
-import { ShoppingCart, Settings, LogOut, User } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthStore } from '../stores/useAuthStore';
+import { ShoppingCart, Settings, LogOut, User, Search } from 'lucide-react';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   
-  const { items: cartItems, toggleCart } = useCartStore();
-  const { user, logout } = useAuth();
+  const { getItemCount, toggleCart } = useCartStore();
+  const { user, isLoggedIn, logout } = useAuthStore();
   
-  const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const cartItemsCount = getItemCount();
 
   const handleLogout = () => {
     logout();
@@ -25,12 +25,8 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-amber-300">
-              <img
-                src="../../public/favicon.ico"
-                alt="Logo"
-                className="w-full h-full object-cover filter brightness-100 group-hover:brightness-100 transition-all duration-500 group-hover:scale-110"
-              />
+            <div className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+              VIENTO
             </div>
           </Link>
 
@@ -63,12 +59,15 @@ const Header: React.FC = () => {
 
           {/* Auth & Cart */}
           <div className="flex items-center space-x-4">
-            {user ? (
+            {isLoggedIn ? (
               <div className="flex items-center space-x-2">
-                <span className="text-gray-300 text-sm">
-                  <User className="w-4 h-4 inline mr-1" />
-                  {user.name || user.email}
-                </span>
+                <Link
+                  to="/dashboard"
+                  className="text-gray-300 hover:text-amber-300 transition-all duration-300 flex items-center space-x-1"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline">{user?.name || user?.email}</span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="text-gray-400 hover:text-amber-300 transition-all duration-300"
@@ -93,8 +92,8 @@ const Header: React.FC = () => {
               </div>
             )}
             
-            <button
-              onClick={toggleCart}
+            <Link
+              to="/cart"
               className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group"
             >
               <ShoppingCart className="w-6 h-6" />
@@ -104,7 +103,7 @@ const Header: React.FC = () => {
                 </span>
               )}
               <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            </button>
+            </Link>
           </div>
         </div>
       </div>

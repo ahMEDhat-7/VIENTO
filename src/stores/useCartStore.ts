@@ -11,6 +11,10 @@ interface CartState {
   updateQuantity: (id: string, quantity: number) => void;
   toggleCart: () => void;
   clearCart: () => void;
+  getTotal: () => number;
+  getSubtotal: () => number;
+  getTax: () => number;
+  getItemCount: () => number;
 }
 
 export const useCartStore = create<CartState>()(
@@ -51,6 +55,10 @@ export const useCartStore = create<CartState>()(
         }));
       },
       updateQuantity: (id, quantity) => {
+        if (quantity <= 0) {
+          get().removeFromCart(id);
+          return;
+        }
         set(state => ({
           items: state.items.map(item => 
             `${item.product.id}-${item.selectedSize}-${item.selectedColor}` === id
@@ -61,6 +69,20 @@ export const useCartStore = create<CartState>()(
       },
       toggleCart: () => set(state => ({ isOpen: !state.isOpen })),
       clearCart: () => set({ items: [] }),
+      getSubtotal: () => {
+        const { items } = get();
+        return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+      },
+      getTax: () => {
+        return get().getSubtotal() * 0.08; // 8% tax
+      },
+      getTotal: () => {
+        return get().getSubtotal() + get().getTax();
+      },
+      getItemCount: () => {
+        const { items } = get();
+        return items.reduce((count, item) => count + item.quantity, 0);
+      },
     }),
     {
       name: 'cart-storage',
