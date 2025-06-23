@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +18,6 @@ const Signup: React.FC = () => {
     confirmPassword: '',
     phone: '',
     address: '',
-    isAdmin: false,
   });
   
   const navigate = useNavigate();
@@ -43,7 +41,7 @@ const Signup: React.FC = () => {
       email: formData.email,
       phone: formData.phone,
       address: formData.address,
-      role: formData.isAdmin ? 'admin' : 'user',
+      role: 'user',
       password: formData.password,
     });
     
@@ -151,18 +149,6 @@ const Signup: React.FC = () => {
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="admin-checkbox"
-                  type="checkbox"
-                  checked={formData.isAdmin}
-                  onChange={(e) => setFormData(prev => ({ ...prev, isAdmin: e.target.checked }))}
-                  className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-600 rounded bg-gray-700"
-                />
-                <Label htmlFor="admin-checkbox" className="ml-2 block text-sm text-gray-300">
-                  Sign up as Admin
-                </Label>
               </div>
               
               <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold">
