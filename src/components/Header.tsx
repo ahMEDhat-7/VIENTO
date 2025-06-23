@@ -1,110 +1,124 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useCartStore } from '../stores/useCartStore';
 import { useAuthStore } from '../stores/useAuthStore';
-import { ShoppingCart, Settings, LogOut, User, Search } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
+import { Search, ShoppingCart, User, LogOut, LayoutDashboard, Settings } from 'lucide-react';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  
-  const { getItemCount, toggleCart } = useCartStore();
-  const { user, isLoggedIn, logout } = useAuthStore();
-  
-  const cartItemsCount = getItemCount();
+  const { items } = useCartStore();
+  const { user, logout } = useAuthStore();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
-    <header className="bg-black/95 backdrop-blur-md shadow-2xl border-b border-gray-800 sticky top-0 z-50 transition-all duration-300">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center group">
-            <div className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
               VIENTO
             </div>
           </Link>
 
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg mx-8">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-muted/50"
+              />
+            </div>
+          </form>
+
           {/* Navigation */}
-          <nav className="flex items-center space-x-8">
-            <Link
-              to="/"
-              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
-            >
-              Home
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
+          <nav className="flex items-center space-x-4">
+            <Link to="/products">
+              <Button variant="ghost" className="text-foreground hover:text-amber-500">
+                Products
+              </Button>
             </Link>
-            <Link
-              to="/products"
-              className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
-            >
-              Shop
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
+
+            <ThemeToggle />
+
+            {/* Cart */}
+            <Link to="/cart">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="w-5 h-5" />
+                {totalItems > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-amber-500 text-black text-xs flex items-center justify-center">
+                    {totalItems}
+                  </Badge>
+                )}
+              </Button>
             </Link>
-            {user?.role === 'admin' && (
-              <Link
-                to="/admin"
-                className="text-gray-300 hover:text-amber-300 transition-all duration-300 hover:scale-110 relative group text-lg font-medium"
-              >
-                <Settings className="w-5 h-5" />
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
+
+            {/* User Menu */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  {user.role === 'admin' && (
+                    <DropdownMenuItem onClick={() => navigate('/admin')}>
+                      <Settings className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex space-x-2">
+                <Link to="/login">
+                  <Button variant="ghost">Login</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-amber-500 hover:bg-amber-600 text-black">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
             )}
           </nav>
-
-          {/* Auth & Cart */}
-          <div className="flex items-center space-x-4">
-            {isLoggedIn ? (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to="/dashboard"
-                  className="text-gray-300 hover:text-amber-300 transition-all duration-300 flex items-center space-x-1"
-                >
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">{user?.name || user?.email}</span>
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="text-gray-400 hover:text-amber-300 transition-all duration-300"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Link
-                  to="/login"
-                  className="text-gray-300 hover:text-amber-300 transition-all duration-300 text-sm"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
-                  className="bg-amber-500 text-black px-3 py-1 rounded text-sm hover:bg-amber-400 transition-all duration-300"
-                >
-                  Sign Up
-                </Link>
-              </div>
-            )}
-            
-            <Link
-              to="/cart"
-              className="relative p-3 text-gray-400 hover:text-amber-300 transition-all duration-300 hover:scale-110 group"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              {cartItemsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-amber-500 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce font-bold">
-                  {cartItemsCount}
-                </span>
-              )}
-              <div className="absolute -inset-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full blur opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-            </Link>
-          </div>
         </div>
       </div>
     </header>
