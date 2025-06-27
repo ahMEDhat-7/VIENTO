@@ -1,5 +1,13 @@
 
-export const API_CONFIG = {
+export const API_CONFIG: {
+  readonly BASE_URL: string;
+  readonly ENDPOINTS: {
+    readonly PRODUCTS: string;
+    readonly AUTH: string;
+    readonly ORDERS: string;
+    readonly USERS: string;
+  };
+} = {
   BASE_URL: 'http://localhost:7000/api',
   ENDPOINTS: {
     PRODUCTS: '/products',
@@ -17,7 +25,7 @@ export const apiClient = {
     }
     return response.json();
   },
-  
+
   post: async (endpoint: string, data: any) => {
     const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
       method: 'POST',
@@ -31,7 +39,7 @@ export const apiClient = {
     }
     return response.json();
   },
-  
+
   put: async (endpoint: string, data: any) => {
     const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
       method: 'PUT',
@@ -45,7 +53,7 @@ export const apiClient = {
     }
     return response.json();
   },
-  
+
   delete: async (endpoint: string) => {
     const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
       method: 'DELETE',
