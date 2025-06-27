@@ -25,13 +25,13 @@ export const useCartStore = create<CartState>()(
       addToCart: (product, size, color, quantity = 1) => {
         const { items } = get();
         const existingItem = items.find(
-          item => item.product.id === product.id && item.selectedSize === size && item.selectedColor === color
+          item => item.productId === product.id && item.selectedSize === size && item.selectedColor === color
         );
 
         if (existingItem) {
           set({
             items: items.map(item =>
-              item.product.id === product.id && item.selectedSize === size && item.selectedColor === color
+              item.productId === product.id && item.selectedSize === size && item.selectedColor === color
                 ? { ...item, quantity: item.quantity + quantity }
                 : item
             )
@@ -39,10 +39,11 @@ export const useCartStore = create<CartState>()(
         } else {
           set({
             items: [...items, {
-              product,
+              productId: product.id,
               quantity,
               selectedSize: size,
               selectedColor: color,
+              product: product, // Store product for UI display
             }]
           });
         }
@@ -50,7 +51,7 @@ export const useCartStore = create<CartState>()(
       removeFromCart: (id) => {
         set(state => ({
           items: state.items.filter(item => 
-            `${item.product.id}-${item.selectedSize}-${item.selectedColor}` !== id
+            `${item.productId}-${item.selectedSize}-${item.selectedColor}` !== id
           )
         }));
       },
@@ -61,7 +62,7 @@ export const useCartStore = create<CartState>()(
         }
         set(state => ({
           items: state.items.map(item => 
-            `${item.product.id}-${item.selectedSize}-${item.selectedColor}` === id
+            `${item.productId}-${item.selectedSize}-${item.selectedColor}` === id
               ? { ...item, quantity }
               : item
           )
@@ -71,7 +72,10 @@ export const useCartStore = create<CartState>()(
       clearCart: () => set({ items: [] }),
       getSubtotal: () => {
         const { items } = get();
-        return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+        return items.reduce((total, item) => {
+          const price = item.product?.price || 0;
+          return total + (price * item.quantity);
+        }, 0);
       },
       getTax: () => {
         return get().getSubtotal() * 0.08; // 8% tax

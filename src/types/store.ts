@@ -50,6 +50,9 @@ export interface Category {
 export interface CartItem {
   productId: string;
   quantity: number;
+  selectedSize?: string;
+  selectedColor?: string;
+  product?: Product; // For UI display purposes
 }
 
 export interface WishlistItem {
@@ -106,6 +109,9 @@ export interface OrderItem {
   name: string;
   price: number;
   quantity: number;
+  selectedSize?: string;
+  selectedColor?: string;
+  product?: Product;
 }
 
 export interface Review {
