@@ -1,21 +1,21 @@
 
 import { create } from 'zustand';
-import { Product } from '../types/store';
+import { Product, Category } from '../types/store';
 
 interface ProductsState {
   products: Product[];
   filteredProducts: Product[];
-  categories: string[];
-  brands: string[];
+  categories: Category[];
   filters: {
-    category: string;
+    categoryId: string;
     brand: string;
     minPrice: number;
     maxPrice: number;
     search: string;
     inStock: boolean;
+    tags: string[];
   };
-  sortBy: 'newest' | 'price-low' | 'price-high' | 'rating' | 'name';
+  sortBy: 'newest' | 'price-low' | 'price-high' | 'rating' | 'name' | 'views';
   setProducts: (products: Product[]) => void;
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (id: string, updates: Partial<Product>) => void;
@@ -25,88 +25,123 @@ interface ProductsState {
   applyFilters: () => void;
   searchProducts: (query: string) => void;
   getProductById: (id: string) => Product | undefined;
+  incrementViews: (id: string) => void;
 }
+
+const mockCategories: Category[] = [
+  {
+    id: 'cat-1',
+    name: 'Baseball Caps',
+    slug: 'baseball-caps',
+    image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'cat-2',
+    name: 'Snapbacks',
+    slug: 'snapbacks',
+    image: 'https://images.unsplash.com/photo-1575428652377-a2d80e2277fc?w=400',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'cat-3',
+    name: 'Bucket Hats',
+    slug: 'bucket-hats',
+    image: 'https://images.unsplash.com/photo-1542596768-5d1d21f1cf98?w=400',
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'cat-4',
+    name: 'Beanies',
+    slug: 'beanies',
+    image: 'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400',
+    createdAt: new Date().toISOString()
+  }
+];
 
 const mockProducts: Product[] = [
   {
     id: '1',
     name: 'Classic Baseball Cap',
-    brand: 'VIENTO',
-    category: 'Baseball',
-    price: 29.99,
-    originalPrice: 39.99,
     description: 'A classic baseball cap perfect for everyday wear. Made with premium cotton.',
+    price: 29.99,
+    categoryId: 'cat-1',
+    brand: 'VIENTO',
+    tags: ['classic', 'cotton', 'adjustable'],
     images: ['https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400'],
-    sizes: ['One Size'],
-    colors: ['Black', 'White', 'Navy'],
-    isNew: true,
-    isTrending: false,
-    rating: 4.5,
-    reviewCount: 125,
-    stock: 50
+    stock: 50,
+    variants: [
+      { color: 'Black', size: 'One Size', stock: 20 },
+      { color: 'White', size: 'One Size', stock: 15 },
+      { color: 'Navy', size: 'One Size', stock: 15 }
+    ],
+    isAvailable: true,
+    discount: {
+      percent: 25,
+      validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    analytics: {
+      views: 245,
+      purchases: 89,
+      averageRating: 4.5,
+      ratingsCount: 125,
+      lastViewedAt: new Date().toISOString(),
+      lastPurchasedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+    },
+    seo: {
+      slug: 'classic-baseball-cap',
+      metaTitle: 'Classic Baseball Cap - VIENTO',
+      metaDescription: 'Premium cotton baseball cap perfect for everyday wear'
+    },
+    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date().toISOString()
   },
   {
     id: '2',
     name: 'Premium Snapback',
-    brand: 'VIENTO',
-    category: 'Snapback',
-    price: 49.99,
     description: 'High-quality snapback with premium materials and adjustable fit.',
+    price: 49.99,
+    categoryId: 'cat-2',
+    brand: 'VIENTO',
+    tags: ['premium', 'snapback', 'adjustable'],
     images: ['https://images.unsplash.com/photo-1575428652377-a2d80e2277fc?w=400'],
-    sizes: ['One Size'],
-    colors: ['Black', 'Gray', 'Red'],
-    isNew: false,
-    isTrending: true,
-    rating: 4.8,
-    reviewCount: 89,
-    stock: 30
-  },
-  {
-    id: '3',
-    name: 'Summer Bucket Hat',
-    brand: 'VIENTO',
-    category: 'Bucket',
-    price: 24.99,
-    description: 'Perfect for sunny days. Lightweight and comfortable bucket hat.',
-    images: ['https://images.unsplash.com/photo-1542596768-5d1d21f1cf98?w=400'],
-    sizes: ['S', 'M', 'L'],
-    colors: ['Beige', 'Navy', 'Olive'],
-    isNew: true,
-    isTrending: false,
-    rating: 4.3,
-    reviewCount: 67,
-    stock: 45
-  },
-  {
-    id: '4',
-    name: 'Winter Beanie',
-    brand: 'VIENTO',
-    category: 'Beanie',
-    price: 19.99,
-    description: 'Warm and cozy winter beanie. Perfect for cold weather.',
-    images: ['https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400'],
-    sizes: ['One Size'],
-    colors: ['Black', 'Gray', 'Navy', 'Red'],
-    isNew: false,
-    isTrending: true,
-    rating: 4.6,
-    reviewCount: 156,
-    stock: 60
+    stock: 30,
+    variants: [
+      { color: 'Black', size: 'One Size', stock: 10 },
+      { color: 'Gray', size: 'One Size', stock: 12 },
+      { color: 'Red', size: 'One Size', stock: 8 }
+    ],
+    isAvailable: true,
+    analytics: {
+      views: 189,
+      purchases: 56,
+      averageRating: 4.8,
+      ratingsCount: 89,
+      lastViewedAt: new Date().toISOString(),
+      lastPurchasedAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
+    },
+    seo: {
+      slug: 'premium-snapback',
+      metaTitle: 'Premium Snapback - VIENTO',
+      metaDescription: 'High-quality snapback with premium materials'
+    },
+    createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date().toISOString()
   }
 ];
 
 export const useProductStore = create<ProductsState>((set, get) => ({
   products: mockProducts,
   filteredProducts: mockProducts,
-  categories: ['Baseball', 'Snapback', 'Bucket', 'Beanie', 'Trucker'],
-  brands: ['VIENTO'],
+  categories: mockCategories,
   filters: {
-    category: '',
+    categoryId: '',
     brand: '',
     minPrice: 0,
     maxPrice: 1000,
     search: '',
     inStock: false,
+    tags: [],
   },
   sortBy: 'newest',
   setProducts: (products) => set({ products, filteredProducts: products }),
@@ -114,10 +149,19 @@ export const useProductStore = create<ProductsState>((set, get) => ({
     const newProduct: Product = {
       ...productData,
       id: Date.now().toString(),
-      rating: 0,
-      reviewCount: 0,
-      isNew: true,
-      isTrending: false,
+      analytics: {
+        views: 0,
+        purchases: 0,
+        averageRating: 0,
+        ratingsCount: 0,
+      },
+      seo: {
+        slug: productData.name.toLowerCase().replace(/\s+/g, '-'),
+        metaTitle: productData.name,
+        metaDescription: productData.description
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     set(state => ({
       products: [...state.products, newProduct],
@@ -126,8 +170,8 @@ export const useProductStore = create<ProductsState>((set, get) => ({
   },
   updateProduct: (id, updates) => {
     set(state => ({
-      products: state.products.map(p => p.id === id ? { ...p, ...updates } : p),
-      filteredProducts: state.filteredProducts.map(p => p.id === id ? { ...p, ...updates } : p)
+      products: state.products.map(p => p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p),
+      filteredProducts: state.filteredProducts.map(p => p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p)
     }));
   },
   deleteProduct: (id) => {
@@ -147,12 +191,24 @@ export const useProductStore = create<ProductsState>((set, get) => ({
   getProductById: (id) => {
     return get().products.find(p => p.id === id);
   },
+  incrementViews: (id) => {
+    const product = get().products.find(p => p.id === id);
+    if (product) {
+      get().updateProduct(id, {
+        analytics: {
+          ...product.analytics,
+          views: product.analytics.views + 1,
+          lastViewedAt: new Date().toISOString()
+        }
+      });
+    }
+  },
   applyFilters: () => {
     const { products, filters, sortBy } = get();
     let filtered = [...products];
 
-    if (filters.category) {
-      filtered = filtered.filter(p => p.category === filters.category);
+    if (filters.categoryId) {
+      filtered = filtered.filter(p => p.categoryId === filters.categoryId);
     }
     if (filters.brand) {
       filtered = filtered.filter(p => p.brand === filters.brand);
@@ -160,11 +216,17 @@ export const useProductStore = create<ProductsState>((set, get) => ({
     if (filters.search) {
       filtered = filtered.filter(p => 
         p.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        p.description.toLowerCase().includes(filters.search.toLowerCase())
+        p.description.toLowerCase().includes(filters.search.toLowerCase()) ||
+        p.tags.some(tag => tag.toLowerCase().includes(filters.search.toLowerCase()))
       );
     }
     if (filters.inStock) {
-      filtered = filtered.filter(p => (p.stock || 0) > 0);
+      filtered = filtered.filter(p => p.stock > 0 && p.isAvailable);
+    }
+    if (filters.tags.length > 0) {
+      filtered = filtered.filter(p => 
+        filters.tags.some(tag => p.tags.includes(tag))
+      );
     }
     filtered = filtered.filter(p => 
       p.price >= filters.minPrice && p.price <= filters.maxPrice
@@ -179,14 +241,17 @@ export const useProductStore = create<ProductsState>((set, get) => ({
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating);
+        filtered.sort((a, b) => b.analytics.averageRating - a.analytics.averageRating);
         break;
       case 'name':
         filtered.sort((a, b) => a.name.localeCompare(b.name));
         break;
+      case 'views':
+        filtered.sort((a, b) => b.analytics.views - a.analytics.views);
+        break;
       case 'newest':
       default:
-        filtered.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         break;
     }
 

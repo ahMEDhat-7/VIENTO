@@ -2,26 +2,54 @@
 export interface Product {
   id: string;
   name: string;
-  price: number;
-  originalPrice?: number;
-  images: string[];
-  category: string;
-  brand: string;
-  sizes: string[];
-  colors: string[];
   description: string;
-  isNew?: boolean;
-  isTrending?: boolean;
-  rating: number;
-  reviewCount: number;
-  stock?: number;
+  price: number;
+  categoryId: string;
+  brand: string;
+  tags: string[];
+  images: string[];
+  stock: number;
+  variants: ProductVariant[];
+  isAvailable: boolean;
+  discount?: {
+    percent: number;
+    validUntil: string;
+  };
+  analytics: {
+    views: number;
+    purchases: number;
+    averageRating: number;
+    ratingsCount: number;
+    lastViewedAt?: string;
+    lastPurchasedAt?: string;
+  };
+  seo: {
+    slug: string;
+    metaTitle: string;
+    metaDescription: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductVariant {
+  color: string;
+  size: string;
+  stock: number;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  parentCategoryId?: string;
+  image: string;
+  createdAt: string;
 }
 
 export interface CartItem {
-  product: Product;
+  productId: string;
   quantity: number;
-  selectedSize: string;
-  selectedColor: string;
 }
 
 export interface WishlistItem {
@@ -32,25 +60,81 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  password: string;
+  role: 'user' | 'admin';
+  status: 'active' | 'inactive';
   addresses: Address[];
+  wishlist: string[];
+  lastLogin?: string;
+  loginCount: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Address {
   id: string;
-  name: string;
   street: string;
   city: string;
-  state: string;
-  zipCode: string;
   country: string;
-  isDefault: boolean;
+  zip?: string;
+  label?: string;
+  isDefault?: boolean;
 }
 
 export interface Order {
   id: string;
-  items: CartItem[];
+  userId: string;
+  items: OrderItem[];
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered';
-  createdAt: string;
+  paymentMethod: string;
+  paymentStatus: 'unpaid' | 'paid' | 'refunded';
+  status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
+  tracking?: {
+    courier: string;
+    trackingNumber: string;
+    shippedAt: string;
+    estimatedDelivery: string;
+  };
   shippingAddress: Address;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Review {
+  id: string;
+  userId: string;
+  productId: string;
+  rating: number;
+  comment: string;
+  images?: string[];
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  discountPercent: number;
+  maxUses: number;
+  usedBy: string[];
+  validFrom: string;
+  validUntil: string;
+  isActive: boolean;
+}
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: 'order_update' | 'promo' | 'admin_message';
+  message: string;
+  read: boolean;
+  createdAt: string;
 }
