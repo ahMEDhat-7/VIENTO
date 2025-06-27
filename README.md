@@ -1,73 +1,40 @@
-# Welcome to your Lovable project
+# 🧢 VIENTO – E-commerce Store for Hats & Accessories
 
-## Project info
+**VIENTO** is a modern e-commerce frontend application designed for selling hats and fashion accessories. Built with **React**, **TypeScript**, and **Tailwind CSS**, it offers a sleek, responsive UI and a seamless shopping experience.
 
-**URL**: https://lovable.dev/projects/c7541d74-76db-4592-909f-3d76f20bacaa
+---
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+- 🛍️ **Product Catalog**  
+  Browse stylish hats and accessories with clean product listing and detailed views.
 
-**Use Lovable**
+- 🛒 **Shopping Cart & Checkout**  
+  Add to cart, update quantities, and complete orders with a smooth checkout flow.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c7541d74-76db-4592-909f-3d76f20bacaa) and start prompting.
+- 🔐 **Authentication**  
+  Secure login for both users and admins with role-based access control.
 
-Changes made via Lovable will be committed automatically to this repo.
+- ⚙️ **Admin Dashboard**  
+  Manage products and orders through a dedicated interface.
 
-**Use your preferred IDE**
+- 🌗 **Light/Dark Mode**  
+  Toggle between themes to match user preferences.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- 🧠 **State Management with Zustand**  
+  Lightweight and scalable global state management.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- 🧩 **Modular & Extensible Codebase**  
+  Easy to customize and scale for other product categories or business types.
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🛠️ Tech Stack
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **Frontend:** React, TypeScript, Tailwind CSS
+- **State Management:** Zustand
+- **Routing:** React Router
+- **Authentication:** Protected Routes
+- **Form Handling:** React Hook Form + Zod
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/c7541d74-76db-4592-909f-3d76f20bacaa) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
