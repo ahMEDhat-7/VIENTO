@@ -8,6 +8,7 @@ import { useCartStore } from '../stores/useCartStore';
 import { useProductStore } from '../stores/useProductStore';
 import { ShoppingCart, Star, Eye, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface ProductCardProps {
   product: Product;
@@ -17,11 +18,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { toast } = useToast();
   const { addToCart } = useCartStore();
   const { incrementViews } = useProductStore();
+  const { isLoggedIn } = useAuthStore();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const availableVariant = product.variants.find(v => v.stock > 0);
     if (!availableVariant) {
       toast({
@@ -43,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     incrementViews(product.id);
   };
 
-  const discountedPrice = product.discount 
+  const discountedPrice = product.discount
     ? product.price * (1 - product.discount.percent / 100)
     : product.price;
 
@@ -52,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isOutOfStock = totalStock === 0 || !product.isAvailable;
 
   return (
-    <Link to={`/product/${product.id}`} onClick={handleProductClick} className="block group">
+    <Link to={`/products/${product.id}`} onClick={handleProductClick} className="block group">
       <div className="bg-card rounded-lg overflow-hidden border border-border hover:border-amber-500/50 transition-all duration-300 group-hover:transform group-hover:scale-105 shadow-sm">
         <div className="aspect-square overflow-hidden relative">
           <img
@@ -60,7 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
           />
-          
+
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {isOnSale && (
@@ -97,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
           )}
         </div>
-        
+
         <div className="p-4">
           <div className="flex items-start justify-between mb-2">
             <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-amber-500 transition-colors flex-1">
@@ -107,7 +109,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {product.brand}
             </Badge>
           </div>
-          
+
           {/* Tags */}
           <div className="flex flex-wrap gap-1 mb-2">
             {product.tags.slice(0, 2).map((tag) => (
@@ -123,11 +125,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-3 h-3 ${
-                    i < Math.floor(product.analytics.averageRating) 
-                      ? 'text-amber-400 fill-current' 
-                      : 'text-muted-foreground'
-                  }`}
+                  className={`w-3 h-3 ${i < Math.floor(product.analytics.averageRating)
+                    ? 'text-amber-400 fill-current'
+                    : 'text-muted-foreground'
+                    }`}
                 />
               ))}
             </div>
@@ -148,13 +149,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
               )}
             </div>
-            <span className={`text-xs px-2 py-1 rounded-full ${
-              totalStock > 10 
-                ? 'bg-green-500/20 text-green-400' 
-                : totalStock > 0
+            <span className={`text-xs px-2 py-1 rounded-full ${totalStock > 10
+              ? 'bg-green-500/20 text-green-400'
+              : totalStock > 0
                 ? 'bg-yellow-500/20 text-yellow-400'
                 : 'bg-red-500/20 text-red-400'
-            }`}>
+              }`}>
               {totalStock > 0 ? `${totalStock} left` : 'Out of stock'}
             </span>
           </div>
@@ -166,23 +166,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               <div
                 key={color}
                 className="w-4 h-4 rounded-full border border-border"
-                style={{ 
-                  backgroundColor: color.toLowerCase() === 'white' ? '#ffffff' : 
-                                  color.toLowerCase() === 'black' ? '#000000' :
-                                  color.toLowerCase() === 'navy' ? '#001f3f' :
-                                  color.toLowerCase() === 'gray' ? '#808080' :
-                                  color.toLowerCase() === 'red' ? '#ff0000' :
-                                  color.toLowerCase()
+                style={{
+                  backgroundColor: color.toLowerCase() === 'white' ? '#ffffff' :
+                    color.toLowerCase() === 'black' ? '#000000' :
+                      color.toLowerCase() === 'navy' ? '#001f3f' :
+                        color.toLowerCase() === 'gray' ? '#808080' :
+                          color.toLowerCase() === 'red' ? '#ff0000' :
+                            color.toLowerCase()
                 }}
                 title={color}
               />
             ))}
           </div>
-          
+
           <Button
             size="sm"
             onClick={handleAddToCart}
-            disabled={isOutOfStock}
+            disabled={isOutOfStock || !isLoggedIn}
             className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold disabled:opacity-50"
           >
             <ShoppingCart className="w-4 h-4 mr-1" />

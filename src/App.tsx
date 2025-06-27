@@ -17,7 +17,8 @@ import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import AdminPanel from './pages/AdminPanel';
 import CartSidebar from './components/CartSidebar';
-import { useAuthStore } from './stores/useAuthStore';
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 const queryClient = new QueryClient();
 
@@ -33,15 +34,15 @@ function App() {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/products" element={<Products />} />
-                <Route path="/products/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="/products/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
+                <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                <Route path="/order-confirmation" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/admin-panel" element={<AdminPanel />} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+                <Route path="/admin-panel" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
               </Routes>
             </main>
             <Toaster />
