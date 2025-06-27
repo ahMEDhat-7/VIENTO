@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,6 +33,8 @@ const AdminProducts: React.FC = () => {
       return;
     }
 
+    const now = new Date().toISOString();
+
     addProduct({
       name: productForm.name,
       brand: productForm.brand,
@@ -55,7 +56,9 @@ const AdminProducts: React.FC = () => {
         slug: productForm.name.toLowerCase().replace(/\s+/g, '-'),
         metaTitle: productForm.name,
         metaDescription: productForm.description
-      }
+      },
+      createdAt: now,
+      updatedAt: now
     });
 
     setProductForm({
