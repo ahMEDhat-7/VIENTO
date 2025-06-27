@@ -1,125 +1,179 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { ShoppingCart, User, Menu, X, Search } from 'lucide-react';
 import { useCartStore } from '../stores/useCartStore';
 import { useAuthStore } from '../stores/useAuthStore';
 import ThemeToggle from './ThemeToggle';
-import { Search, ShoppingCart, User, LogOut, LayoutDashboard, Settings } from 'lucide-react';
 
 const Header: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { items } = useCartStore();
   const { user, logout } = useAuthStore();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
+  
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-              VIENTO
-            </div>
-          </Link>
-
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-muted/50"
-              />
-            </div>
-          </form>
-
-          {/* Navigation */}
-          <nav className="flex items-center space-x-4">
-            <Link to="/products">
-              <Button variant="ghost" className="text-foreground hover:text-amber-500">
-                Products
-              </Button>
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-2">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+                VIENTO
+              </h1>
             </Link>
+          </div>
 
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link
+              to="/"
+              className="text-foreground hover:text-amber-500 transition-colors font-medium"
+            >
+              Home
+            </Link>
+            <Link
+              to="/products"
+              className="text-foreground hover:text-amber-500 transition-colors font-medium"
+            >
+              Products
+            </Link>
+            <Link
+              to="/about"
+              className="text-foreground hover:text-amber-500 transition-colors font-medium"
+            >
+              About
+            </Link>
+            <Link
+              to="/contact"
+              className="text-foreground hover:text-amber-500 transition-colors font-medium"
+            >
+              Contact
+            </Link>
+          </nav>
+
+          {/* Actions */}
+          <div className="flex items-center space-x-4">
             <ThemeToggle />
+            
+            <Button variant="ghost" size="icon">
+              <Search className="h-5 w-5" />
+            </Button>
 
-            {/* Cart */}
-            <Link to="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="w-5 h-5" />
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
                 {totalItems > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-amber-500 text-black text-xs flex items-center justify-center">
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-amber-500 text-black">
                     {totalItems}
                   </Badge>
                 )}
               </Button>
             </Link>
 
-            {/* User Menu */}
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+              <div className="flex items-center space-x-2">
+                <Link to="/dashboard">
                   <Button variant="ghost" size="icon">
-                    <User className="w-5 h-5" />
+                    <User className="h-5 w-5" />
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Dashboard
-                  </DropdownMenuItem>
-                  {user.role === 'admin' && (
-                    <DropdownMenuItem onClick={() => navigate('/admin')}>
-                      <Settings className="w-4 h-4 mr-2" />
-                      Admin Panel
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </Link>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:inline-flex"
+                >
+                  Logout
+                </Button>
+              </div>
             ) : (
-              <div className="flex space-x-2">
+              <div className="hidden sm:flex items-center space-x-2">
                 <Link to="/login">
-                  <Button variant="ghost">Login</Button>
+                  <Button variant="ghost" size="sm">
+                    Login
+                  </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button className="bg-amber-500 hover:bg-amber-600 text-black">
+                  <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-black">
                     Sign Up
                   </Button>
                 </Link>
               </div>
             )}
-          </nav>
+
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 border-t border-border">
+              <Link
+                to="/"
+                className="block px-3 py-2 text-foreground hover:text-amber-500 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/products"
+                className="block px-3 py-2 text-foreground hover:text-amber-500 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Products
+              </Link>
+              <Link
+                to="/about"
+                className="block px-3 py-2 text-foreground hover:text-amber-500 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link
+                to="/contact"
+                className="block px-3 py-2 text-foreground hover:text-amber-500 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
+              </Link>
+              
+              {!user && (
+                <div className="pt-4 border-t border-border">
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-black">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
