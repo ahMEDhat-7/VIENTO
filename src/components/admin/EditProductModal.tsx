@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Product } from '../../types/store';
+import { Product, ProductVariant } from '../../types/store';
+import { useProductsStore } from '../../stores/useProductsStore';
 
 interface EditProductModalProps {
   product: Product;
@@ -16,64 +17,63 @@ interface EditProductModalProps {
 }
 
 const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, onClose }) => {
+  const { categories, brands } = useProductsStore();
+  
   const [formData, setFormData] = useState({
     name: product.name,
     brand: product.brand,
-    category: product.category,
+    categoryId: product.categoryId,
     price: product.price.toString(),
-    originalPrice: product.originalPrice?.toString() || '',
     description: product.description,
     images: product.images.join(', '),
-    sizes: product.sizes,
-    colors: product.colors,
-    isNew: product.isNew || false,
-    isTrending: product.isTrending || false,
-    rating: product.rating.toString(),
-    reviewCount: product.reviewCount.toString()
+    variants: [...product.variants],
+    isAvailable: product.isAvailable
   });
 
-  const categories = ['Baseball', 'Snapback', 'Bucket', 'Beanie', 'Trucker'];
-  const brands = ['Nike', 'Adidas', 'New Era', 'Mitchell & Ness', 'Patagonia'];
+  const [newVariant, setNewVariant] = useState({ color: '', size: '', stock: '' });
+
   const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
   const availableColors = ['Black', 'White', 'Red', 'Blue', 'Green', 'Yellow', 'Gray', 'Navy', 'Brown'];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const totalStock = formData.variants.reduce((sum, variant) => sum + variant.stock, 0);
+
     const updatedProduct: Product = {
       ...product,
       name: formData.name,
       brand: formData.brand,
-      category: formData.category,
+      categoryId: formData.categoryId,
       price: parseFloat(formData.price),
-      originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
       description: formData.description,
       images: formData.images.split(',').map(url => url.trim()),
-      sizes: formData.sizes,
-      colors: formData.colors,
-      isNew: formData.isNew,
-      isTrending: formData.isTrending,
-      rating: parseFloat(formData.rating),
-      reviewCount: parseInt(formData.reviewCount)
+      variants: formData.variants,
+      stock: totalStock,
+      isAvailable: formData.isAvailable,
+      updatedAt: new Date().toISOString()
     };
 
     onUpdate(updatedProduct);
   };
 
-  const handleSizeChange = (size: string, checked: boolean) => {
-    if (checked) {
-      setFormData(prev => ({ ...prev, sizes: [...prev.sizes, size] }));
-    } else {
-      setFormData(prev => ({ ...prev, sizes: prev.sizes.filter(s => s !== size) }));
+  const addVariant = () => {
+    if (newVariant.color && newVariant.size && newVariant.stock) {
+      const variant: ProductVariant = {
+        color: newVariant.color,
+        size: newVariant.size,
+        stock: parseInt(newVariant.stock)
+      };
+      setFormData(prev => ({ ...prev, variants: [...prev.variants, variant] }));
+      setNewVariant({ color: '', size: '', stock: '' });
     }
   };
 
-  const handleColorChange = (color: string, checked: boolean) => {
-    if (checked) {
-      setFormData(prev => ({ ...prev, colors: [...prev.colors, color] }));
-    } else {
-      setFormData(prev => ({ ...prev, colors: prev.colors.filter(c => c !== color) }));
-    }
+  const removeVariant = (index: number) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      variants: prev.variants.filter((_, i) => i !== index) 
+    }));
   };
 
   return (
@@ -111,13 +111,13 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, 
 
             <div>
               <Label htmlFor="edit-category">Category</Label>
-              <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+              <Select value={formData.categoryId} onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map(category => (
-                    <SelectItem key={category} value={category}>{category}</SelectItem>
+                    <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -147,55 +147,72 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, 
           </div>
 
           <div>
-            <Label>Available Sizes</Label>
-            <div className="grid grid-cols-4 gap-2 mt-2">
-              {availableSizes.map(size => (
-                <div key={size} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`edit-size-${size}`}
-                    checked={formData.sizes.includes(size)}
-                    onCheckedChange={(checked) => handleSizeChange(size, checked as boolean)}
-                  />
-                  <Label htmlFor={`edit-size-${size}`}>{size}</Label>
-                </div>
-              ))}
-            </div>
+            <Label htmlFor="edit-images">Images (comma separated URLs)</Label>
+            <Input
+              id="edit-images"
+              value={formData.images}
+              onChange={(e) => setFormData(prev => ({ ...prev, images: e.target.value }))}
+            />
           </div>
 
-          <div>
-            <Label>Available Colors</Label>
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              {availableColors.map(color => (
-                <div key={color} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`edit-color-${color}`}
-                    checked={formData.colors.includes(color)}
-                    onCheckedChange={(checked) => handleColorChange(color, checked as boolean)}
-                  />
-                  <Label htmlFor={`edit-color-${color}`}>{color}</Label>
-                </div>
-              ))}
+          {/* Product Variants Section */}
+          <div className="space-y-4">
+            <Label>Product Variants</Label>
+            
+            <div className="grid grid-cols-4 gap-2">
+              <Select value={newVariant.color} onValueChange={(value) => setNewVariant(prev => ({ ...prev, color: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Color" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableColors.map(color => (
+                    <SelectItem key={color} value={color}>{color}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={newVariant.size} onValueChange={(value) => setNewVariant(prev => ({ ...prev, size: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Size" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableSizes.map(size => (
+                    <SelectItem key={size} value={size}>{size}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Input
+                type="number"
+                placeholder="Stock"
+                value={newVariant.stock}
+                onChange={(e) => setNewVariant(prev => ({ ...prev, stock: e.target.value }))}
+              />
+              
+              <Button type="button" onClick={addVariant}>Add</Button>
             </div>
+
+            {formData.variants.length > 0 && (
+              <div className="space-y-2">
+                {formData.variants.map((variant, index) => (
+                  <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                    <span>{variant.color} - {variant.size} (Stock: {variant.stock})</span>
+                    <Button type="button" variant="outline" size="sm" onClick={() => removeVariant(index)}>
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="edit-isNew"
-                checked={formData.isNew}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isNew: checked as boolean }))}
-              />
-              <Label htmlFor="edit-isNew">Mark as New</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="edit-isTrending"
-                checked={formData.isTrending}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isTrending: checked as boolean }))}
-              />
-              <Label htmlFor="edit-isTrending">Mark as Trending</Label>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="edit-isAvailable"
+              checked={formData.isAvailable}
+              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isAvailable: checked as boolean }))}
+            />
+            <Label htmlFor="edit-isAvailable">Available for sale</Label>
           </div>
 
           <div className="flex justify-end space-x-2">

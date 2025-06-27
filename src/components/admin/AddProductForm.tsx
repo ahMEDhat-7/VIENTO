@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useProductsStore } from '../../stores/useProductsStore';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Upload, X } from 'lucide-react';
-import { Product } from '../../types/store';
+import { Product, ProductVariant } from '../../types/store';
 
 const AddProductForm: React.FC = () => {
   const { products, categories, brands, setProducts } = useProductsStore();
@@ -16,20 +17,17 @@ const AddProductForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     brand: '',
-    category: '',
+    categoryId: '',
     price: '',
-    originalPrice: '',
     description: '',
     images: '',
-    sizes: [] as string[],
-    colors: [] as string[],
-    isNew: false,
-    isTrending: false,
-    rating: '4.5',
-    reviewCount: '0'
+    variants: [] as ProductVariant[],
+    stock: '0',
+    isAvailable: true
   });
 
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [newVariant, setNewVariant] = useState({ color: '', size: '', stock: '' });
 
   const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
   const availableColors = ['Black', 'White', 'Red', 'Blue', 'Green', 'Yellow', 'Gray', 'Navy', 'Brown'];
@@ -52,6 +50,25 @@ const AddProductForm: React.FC = () => {
     setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const addVariant = () => {
+    if (newVariant.color && newVariant.size && newVariant.stock) {
+      const variant: ProductVariant = {
+        color: newVariant.color,
+        size: newVariant.size,
+        stock: parseInt(newVariant.stock)
+      };
+      setFormData(prev => ({ ...prev, variants: [...prev.variants, variant] }));
+      setNewVariant({ color: '', size: '', stock: '' });
+    }
+  };
+
+  const removeVariant = (index: number) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      variants: prev.variants.filter((_, i) => i !== index) 
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -61,21 +78,33 @@ const AddProductForm: React.FC = () => {
       ...formData.images.split(',').map(url => url.trim()).filter(url => url)
     ];
 
+    const totalStock = formData.variants.reduce((sum, variant) => sum + variant.stock, 0);
+
     const newProduct: Product = {
       id: Date.now().toString(),
       name: formData.name,
       brand: formData.brand,
-      category: formData.category,
+      categoryId: formData.categoryId,
       price: parseFloat(formData.price),
-      originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
       description: formData.description,
       images: allImages,
-      sizes: formData.sizes,
-      colors: formData.colors,
-      isNew: formData.isNew,
-      isTrending: formData.isTrending,
-      rating: parseFloat(formData.rating),
-      reviewCount: parseInt(formData.reviewCount)
+      tags: [],
+      stock: totalStock,
+      variants: formData.variants,
+      isAvailable: formData.isAvailable,
+      analytics: {
+        views: 0,
+        purchases: 0,
+        averageRating: 0,
+        ratingsCount: 0
+      },
+      seo: {
+        slug: formData.name.toLowerCase().replace(/\s+/g, '-'),
+        metaTitle: formData.name,
+        metaDescription: formData.description
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     const updatedProducts = [...products, newProduct];
@@ -85,38 +114,18 @@ const AddProductForm: React.FC = () => {
     setFormData({
       name: '',
       brand: '',
-      category: '',
+      categoryId: '',
       price: '',
-      originalPrice: '',
       description: '',
       images: '',
-      sizes: [],
-      colors: [],
-      isNew: false,
-      isTrending: false,
-      rating: '4.5',
-      reviewCount: '0'
+      variants: [],
+      stock: '0',
+      isAvailable: true
     });
     setUploadedImages([]);
 
     console.log('Adding new product:', newProduct);
     alert('Product added successfully!');
-  };
-
-  const handleSizeChange = (size: string, checked: boolean) => {
-    if (checked) {
-      setFormData(prev => ({ ...prev, sizes: [...prev.sizes, size] }));
-    } else {
-      setFormData(prev => ({ ...prev, sizes: prev.sizes.filter(s => s !== size) }));
-    }
-  };
-
-  const handleColorChange = (color: string, checked: boolean) => {
-    if (checked) {
-      setFormData(prev => ({ ...prev, colors: [...prev.colors, color] }));
-    } else {
-      setFormData(prev => ({ ...prev, colors: prev.colors.filter(c => c !== color) }));
-    }
   };
 
   return (
@@ -152,14 +161,14 @@ const AddProductForm: React.FC = () => {
             </div>
 
             <div>
-              <Label htmlFor="category">Category</Label>
-              <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+              <Label htmlFor="categoryId">Category</Label>
+              <Select value={formData.categoryId} onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map(category => (
-                    <SelectItem key={category} value={category}>{category}</SelectItem>
+                    <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -174,17 +183,6 @@ const AddProductForm: React.FC = () => {
                 value={formData.price}
                 onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
                 required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="originalPrice">Original Price ($) (Optional)</Label>
-              <Input
-                id="originalPrice"
-                type="number"
-                step="0.01"
-                value={formData.originalPrice}
-                onChange={(e) => setFormData(prev => ({ ...prev, originalPrice: e.target.value }))}
               />
             </div>
           </div>
@@ -204,7 +202,6 @@ const AddProductForm: React.FC = () => {
           <div className="space-y-4">
             <Label>Product Images</Label>
             
-            {/* Upload Button */}
             <div className="flex items-center gap-4">
               <Button type="button" variant="outline" className="flex items-center gap-2" asChild>
                 <label htmlFor="image-upload" className="cursor-pointer">
@@ -223,7 +220,6 @@ const AddProductForm: React.FC = () => {
               <span className="text-sm text-gray-500">or enter URLs below</span>
             </div>
 
-            {/* Display Uploaded Images */}
             {uploadedImages.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {uploadedImages.map((image, index) => (
@@ -245,7 +241,6 @@ const AddProductForm: React.FC = () => {
               </div>
             )}
 
-            {/* URL Input */}
             <div>
               <Label htmlFor="images">Or enter Image URLs (comma separated)</Label>
               <Input
@@ -257,56 +252,64 @@ const AddProductForm: React.FC = () => {
             </div>
           </div>
 
-          <div>
-            <Label>Available Sizes</Label>
-            <div className="grid grid-cols-4 gap-2 mt-2">
-              {availableSizes.map(size => (
-                <div key={size} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`size-${size}`}
-                    checked={formData.sizes.includes(size)}
-                    onCheckedChange={(checked) => handleSizeChange(size, checked as boolean)}
-                  />
-                  <Label htmlFor={`size-${size}`}>{size}</Label>
-                </div>
-              ))}
+          {/* Product Variants Section */}
+          <div className="space-y-4">
+            <Label>Product Variants</Label>
+            
+            <div className="grid grid-cols-4 gap-2">
+              <Select value={newVariant.color} onValueChange={(value) => setNewVariant(prev => ({ ...prev, color: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Color" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableColors.map(color => (
+                    <SelectItem key={color} value={color}>{color}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={newVariant.size} onValueChange={(value) => setNewVariant(prev => ({ ...prev, size: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Size" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableSizes.map(size => (
+                    <SelectItem key={size} value={size}>{size}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Input
+                type="number"
+                placeholder="Stock"
+                value={newVariant.stock}
+                onChange={(e) => setNewVariant(prev => ({ ...prev, stock: e.target.value }))}
+              />
+              
+              <Button type="button" onClick={addVariant}>Add</Button>
             </div>
+
+            {formData.variants.length > 0 && (
+              <div className="space-y-2">
+                {formData.variants.map((variant, index) => (
+                  <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                    <span>{variant.color} - {variant.size} (Stock: {variant.stock})</span>
+                    <Button type="button" variant="outline" size="sm" onClick={() => removeVariant(index)}>
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div>
-            <Label>Available Colors</Label>
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              {availableColors.map(color => (
-                <div key={color} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`color-${color}`}
-                    checked={formData.colors.includes(color)}
-                    onCheckedChange={(checked) => handleColorChange(color, checked as boolean)}
-                  />
-                  <Label htmlFor={`color-${color}`}>{color}</Label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="isNew"
-                checked={formData.isNew}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isNew: checked as boolean }))}
-              />
-              <Label htmlFor="isNew">Mark as New</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="isTrending"
-                checked={formData.isTrending}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isTrending: checked as boolean }))}
-              />
-              <Label htmlFor="isTrending">Mark as Trending</Label>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isAvailable"
+              checked={formData.isAvailable}
+              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isAvailable: checked as boolean }))}
+            />
+            <Label htmlFor="isAvailable">Available for sale</Label>
           </div>
 
           <Button type="submit" className="w-full">

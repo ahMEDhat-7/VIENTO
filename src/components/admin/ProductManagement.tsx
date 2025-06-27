@@ -10,14 +10,19 @@ import { Product } from '../../types/store';
 import EditProductModal from './EditProductModal';
 
 const ProductManagement: React.FC = () => {
-  const { products, setProducts } = useProductsStore();
+  const { products, categories, setProducts } = useProductsStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category?.name || 'Unknown';
+  };
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    getCategoryName(product.categoryId).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDeleteProduct = async (productId: string) => {
@@ -68,6 +73,7 @@ const ProductManagement: React.FC = () => {
                 <TableHead>Category</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Stock</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -83,10 +89,17 @@ const ProductManagement: React.FC = () => {
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>{product.brand}</TableCell>
-                  <TableCell>{product.category}</TableCell>
-                  <TableCell>${product.price}</TableCell>
+                  <TableCell>{getCategoryName(product.categoryId)}</TableCell>
+                  <TableCell>${product.price.toFixed(2)}</TableCell>
+                  <TableCell>{product.stock}</TableCell>
                   <TableCell>
-                    <span className="text-green-600">In Stock</span>
+                    <span className={`px-2 py-1 rounded text-xs ${
+                      product.isAvailable && product.stock > 0 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {product.isAvailable && product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">

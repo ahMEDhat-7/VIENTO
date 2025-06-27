@@ -16,13 +16,11 @@ const AdminProducts: React.FC = () => {
   const [productForm, setProductForm] = useState({
     name: '',
     brand: 'VIENTO',
-    category: 'Baseball',
+    categoryId: 'cat-1',
     price: '',
-    originalPrice: '',
     description: '',
     images: [''],
-    sizes: ['One Size'],
-    colors: ['Black'],
+    variants: [{ color: 'Black', size: 'One Size', stock: 0 }],
     stock: '',
   });
 
@@ -39,28 +37,35 @@ const AdminProducts: React.FC = () => {
     addProduct({
       name: productForm.name,
       brand: productForm.brand,
-      category: productForm.category,
+      categoryId: productForm.categoryId,
       price: parseFloat(productForm.price),
-      originalPrice: productForm.originalPrice ? parseFloat(productForm.originalPrice) : undefined,
       description: productForm.description,
       images: productForm.images.filter(img => img.trim() !== ''),
-      sizes: productForm.sizes,
-      colors: productForm.colors,
+      variants: productForm.variants,
       stock: productForm.stock ? parseInt(productForm.stock) : 0,
-      rating: 0,
-      reviewCount: 0,
+      tags: [],
+      isAvailable: true,
+      analytics: {
+        views: 0,
+        purchases: 0,
+        averageRating: 0,
+        ratingsCount: 0,
+      },
+      seo: {
+        slug: productForm.name.toLowerCase().replace(/\s+/g, '-'),
+        metaTitle: productForm.name,
+        metaDescription: productForm.description
+      }
     });
 
     setProductForm({
       name: '',
       brand: 'VIENTO',
-      category: 'Baseball',
+      categoryId: 'cat-1',
       price: '',
-      originalPrice: '',
       description: '',
       images: [''],
-      sizes: ['One Size'],
-      colors: ['Black'],
+      variants: [{ color: 'Black', size: 'One Size', stock: 0 }],
       stock: '',
     });
     setShowAddProduct(false);
@@ -118,18 +123,17 @@ const AdminProducts: React.FC = () => {
               />
             </div>
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="categoryId">Category</Label>
               <select
-                id="category"
-                value={productForm.category}
-                onChange={(e) => setProductForm(prev => ({ ...prev, category: e.target.value }))}
+                id="categoryId"
+                value={productForm.categoryId}
+                onChange={(e) => setProductForm(prev => ({ ...prev, categoryId: e.target.value }))}
                 className="w-full h-10 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
               >
-                <option value="Baseball">Baseball</option>
-                <option value="Snapback">Snapback</option>
-                <option value="Bucket">Bucket</option>
-                <option value="Beanie">Beanie</option>
-                <option value="Trucker">Trucker</option>
+                <option value="cat-1">Baseball Caps</option>
+                <option value="cat-2">Snapbacks</option>
+                <option value="cat-3">Bucket Hats</option>
+                <option value="cat-4">Beanies</option>
               </select>
             </div>
             <div>
