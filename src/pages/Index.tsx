@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -12,16 +11,18 @@ const Index: React.FC = () => {
   const featuredProducts = products.slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary to-background ">
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8  bg-[url('/logo.png')] bg-cover bg-center flex flex-col justify-between h-[400px]">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+          {/* <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
             VIENTO
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto">
             Where style meets the wind. Discover premium headwear that defines your unique character.
-          </p>
+          </p> */}
+        </div>
+        <div className="max-w-7xl mx-auto text-center mb-4">
           <Link to="/products">
             <Button
               size="lg"

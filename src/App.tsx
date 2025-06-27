@@ -17,6 +17,7 @@ import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import AdminPanel from './pages/AdminPanel';
 import CartSidebar from './components/CartSidebar';
+import { useAuthStore } from './stores/useAuthStore';
 
 const queryClient = new QueryClient();
 
