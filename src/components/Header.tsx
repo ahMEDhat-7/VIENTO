@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,6 @@ const Header: React.FC = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
@@ -34,7 +32,6 @@ const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/"
@@ -48,21 +45,24 @@ const Header: React.FC = () => {
             >
               Products
             </Link>
-            <Link
-              to="/about"
-              className="text-foreground hover:text-amber-500 transition-colors font-medium"
-            >
-              About
-            </Link>
-            <Link
-              to="/contact"
-              className="text-foreground hover:text-amber-500 transition-colors font-medium"
-            >
-              Contact
-            </Link>
+            {user && user.role === 'admin' && (
+              <>
+                <Link
+                  to="/admin"
+                  className="text-foreground hover:text-amber-500 transition-colors font-medium"
+                >
+                  Admin
+                </Link>
+                <Link
+                  to="/admin-panel"
+                  className="text-foreground hover:text-amber-500 transition-colors font-medium"
+                >
+                  Admin Panel
+                </Link>
+              </>
+            )}
           </nav>
 
-          {/* Actions */}
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             
@@ -112,7 +112,6 @@ const Header: React.FC = () => {
               </div>
             )}
 
-            {/* Mobile menu button */}
             <Button
               variant="ghost"
               size="icon"
@@ -124,7 +123,6 @@ const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 border-t border-border">
@@ -142,20 +140,24 @@ const Header: React.FC = () => {
               >
                 Products
               </Link>
-              <Link
-                to="/about"
-                className="block px-3 py-2 text-foreground hover:text-amber-500 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About
-              </Link>
-              <Link
-                to="/contact"
-                className="block px-3 py-2 text-foreground hover:text-amber-500 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </Link>
+              {user && user.role === 'admin' && (
+                <>
+                  <Link
+                    to="/admin"
+                    className="block px-3 py-2 text-foreground hover:text-amber-500 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                  <Link
+                    to="/admin-panel"
+                    className="block px-3 py-2 text-foreground hover:text-amber-500 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Admin Panel
+                  </Link>
+                </>
+              )}
               
               {!user && (
                 <div className="pt-4 border-t border-border">

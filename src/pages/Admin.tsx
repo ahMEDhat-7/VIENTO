@@ -1,13 +1,22 @@
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useAuthStore } from '../stores/useAuthStore';
+import { Navigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AddProductForm from '../components/admin/AddProductForm';
 import ProductManagement from '../components/admin/ProductManagement';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Admin: React.FC = () => {
+  const { user, isLoggedIn } = useAuthStore();
+
+  // Check if user is authenticated and is admin
+  if (!isLoggedIn || !user || user.role !== 'admin') {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Card className="mb-8">
           <CardHeader>

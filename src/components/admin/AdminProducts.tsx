@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,8 +54,6 @@ const AdminProducts: React.FC = () => {
     }
 
     const now = new Date().toISOString();
-
-    // Combine uploaded images with URL images
     const allImages = [
       ...uploadedImages,
       ...productForm.images.filter(img => img.trim() !== '')
@@ -86,6 +85,7 @@ const AdminProducts: React.FC = () => {
       updatedAt: now
     });
 
+    // Reset form
     setProductForm({
       name: '',
       brand: 'VIENTO',
@@ -126,7 +126,6 @@ const AdminProducts: React.FC = () => {
         </Button>
       </div>
 
-      {/* Add Product Form */}
       {showAddProduct && (
         <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
           <h3 className="text-lg font-bold text-white mb-4">Add New Product</h3>
@@ -251,7 +250,6 @@ const AdminProducts: React.FC = () => {
         </div>
       )}
 
-      {/* Products List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
           <div key={product.id} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
