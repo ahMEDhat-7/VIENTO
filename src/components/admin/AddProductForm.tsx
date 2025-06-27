@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Upload, X } from 'lucide-react';
 import { Product, ProductVariant } from '../../types/store';
+import { apiClient, ENDPOINTS } from '@/config/api';
 
 const AddProductForm: React.FC = () => {
   const { products, categories, brands, setProducts } = useProductsStore();
@@ -63,9 +64,9 @@ const AddProductForm: React.FC = () => {
   };
 
   const removeVariant = (index: number) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      variants: prev.variants.filter((_, i) => i !== index) 
+    setFormData(prev => ({
+      ...prev,
+      variants: prev.variants.filter((_, i) => i !== index)
     }));
   };
 
@@ -124,6 +125,7 @@ const AddProductForm: React.FC = () => {
     });
     setUploadedImages([]);
 
+    apiClient.post(ENDPOINTS.PRODUCTS, newProduct);
     console.log('Adding new product:', newProduct);
     alert('Product added successfully!');
   };
@@ -201,7 +203,7 @@ const AddProductForm: React.FC = () => {
           {/* Image Upload Section */}
           <div className="space-y-4">
             <Label>Product Images</Label>
-            
+
             <div className="flex items-center gap-4">
               <Button type="button" variant="outline" className="flex items-center gap-2" asChild>
                 <label htmlFor="image-upload" className="cursor-pointer">
@@ -255,7 +257,7 @@ const AddProductForm: React.FC = () => {
           {/* Product Variants Section */}
           <div className="space-y-4">
             <Label>Product Variants</Label>
-            
+
             <div className="grid grid-cols-4 gap-2">
               <Select value={newVariant.color} onValueChange={(value) => setNewVariant(prev => ({ ...prev, color: value }))}>
                 <SelectTrigger>
@@ -267,7 +269,7 @@ const AddProductForm: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={newVariant.size} onValueChange={(value) => setNewVariant(prev => ({ ...prev, size: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Size" />
@@ -278,14 +280,14 @@ const AddProductForm: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Input
                 type="number"
                 placeholder="Stock"
                 value={newVariant.stock}
                 onChange={(e) => setNewVariant(prev => ({ ...prev, stock: e.target.value }))}
               />
-              
+
               <Button type="button" onClick={addVariant}>Add</Button>
             </div>
 

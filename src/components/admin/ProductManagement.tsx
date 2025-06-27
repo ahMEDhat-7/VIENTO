@@ -1,6 +1,6 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProductsStore } from '../../stores/useProductsStore';
+import { apiClient, ENDPOINTS } from '../../config/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +13,18 @@ const ProductManagement: React.FC = () => {
   const { products, categories, setProducts } = useProductsStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const products = await apiClient.get(ENDPOINTS.PRODUCTS);
+        setProducts(products);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+      }
+    };
+    fetchProducts();
+  }, [setProducts]);
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find(cat => cat.id === categoryId);
@@ -27,10 +39,13 @@ const ProductManagement: React.FC = () => {
 
   const handleDeleteProduct = async (productId: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      const updatedProducts = products.filter(p => p.id !== productId);
-      setProducts(updatedProducts);
-      
-      console.log('Deleting product:', productId);
+      try {
+        await apiClient.delete(`${ENDPOINTS.PRODUCTS}/${productId}`);
+        const products = await apiClient.get(ENDPOINTS.PRODUCTS);
+        setProducts(products);
+      } catch (error) {
+        console.error('Failed to delete product:', error);
+      }
     }
   };
 
@@ -38,14 +53,15 @@ const ProductManagement: React.FC = () => {
     setEditingProduct(product);
   };
 
-  const handleUpdateProduct = (updatedProduct: Product) => {
-    const updatedProducts = products.map(p => 
-      p.id === updatedProduct.id ? updatedProduct : p
-    );
-    setProducts(updatedProducts);
-    setEditingProduct(null);
-    
-    console.log('Updating product:', updatedProduct);
+  const handleUpdateProduct = async (updatedProduct: Product) => {
+    try {
+      await apiClient.patch(`${ENDPOINTS.PRODUCTS}/${updatedProduct.id}`, updatedProduct);
+      const products = await apiClient.get(ENDPOINTS.PRODUCTS);
+      setProducts(products);
+      setEditingProduct(null);
+    } catch (error) {
+      console.error('Failed to update product:', error);
+    }
   };
 
   return (
@@ -93,11 +109,10 @@ const ProductManagement: React.FC = () => {
                   <TableCell>${product.price.toFixed(2)}</TableCell>
                   <TableCell>{product.stock}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      product.isAvailable && product.stock > 0 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`px-2 py-1 rounded text-xs ${product.isAvailable && product.stock > 0
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                      }`}>
                       {product.isAvailable && product.stock > 0 ? 'In Stock' : 'Out of Stock'}
                     </span>
                   </TableCell>

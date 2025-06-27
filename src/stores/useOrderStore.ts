@@ -1,7 +1,8 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { CartItem } from '../types/store';
+import { useEffect } from "react";
+import { apiClient } from "@/config/api";
 
 export interface Order {
   id: string;

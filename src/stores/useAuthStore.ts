@@ -1,7 +1,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { apiClient, API_CONFIG } from '../config/api';
+import { apiClient, ENDPOINTS } from '../config/api';
 
 interface User {
   id: string;
@@ -28,11 +28,11 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
       login: async (email: string, password: string) => {
         try {
-          const response = await apiClient.post(`${API_CONFIG.ENDPOINTS.AUTH}/login`, {
+          const response = await apiClient.post(`${ENDPOINTS.AUTH}/login`, {
             email,
             password,
           });
-          
+
           if (response.user) {
             set({ user: response.user, isLoggedIn: true });
             return true;
@@ -59,8 +59,8 @@ export const useAuthStore = create<AuthState>()(
       },
       register: async (userData) => {
         try {
-          const response = await apiClient.post(`${API_CONFIG.ENDPOINTS.AUTH}/register`, userData);
-          
+          const response = await apiClient.post(`${ENDPOINTS.AUTH}/register`, userData);
+
           if (response.user) {
             set({ user: response.user, isLoggedIn: true });
             return true;
