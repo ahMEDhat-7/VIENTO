@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Star, Truck, Shield, Headphones } from 'lucide-react';
 import { useProductStore } from '../stores/useProductStore';
 import ProductCard from '../components/ProductCard';
+import Footer from '../components/Footer';
 
 const Index: React.FC = () => {
   const { products } = useProductStore();
@@ -144,6 +144,8 @@ const Index: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 };

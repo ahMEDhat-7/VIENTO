@@ -4,13 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useProductStore } from '../../stores/useProductStore';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, X } from 'lucide-react';
 
 const AdminProducts: React.FC = () => {
   const { toast } = useToast();
   const { products, addProduct, deleteProduct } = useProductStore();
   
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   
   const [productForm, setProductForm] = useState({
     name: '',
@@ -22,6 +23,24 @@ const AdminProducts: React.FC = () => {
     variants: [{ color: 'Black', size: 'One Size', stock: 0 }],
     stock: '',
   });
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result as string;
+          setUploadedImages(prev => [...prev, result]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const removeUploadedImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleAddProduct = () => {
     if (!productForm.name || !productForm.price) {
@@ -35,13 +54,19 @@ const AdminProducts: React.FC = () => {
 
     const now = new Date().toISOString();
 
+    // Combine uploaded images with URL images
+    const allImages = [
+      ...uploadedImages,
+      ...productForm.images.filter(img => img.trim() !== '')
+    ];
+
     addProduct({
       name: productForm.name,
       brand: productForm.brand,
       categoryId: productForm.categoryId,
       price: parseFloat(productForm.price),
       description: productForm.description,
-      images: productForm.images.filter(img => img.trim() !== ''),
+      images: allImages,
       variants: productForm.variants,
       stock: productForm.stock ? parseInt(productForm.stock) : 0,
       tags: [],
@@ -71,6 +96,7 @@ const AdminProducts: React.FC = () => {
       variants: [{ color: 'Black', size: 'One Size', stock: 0 }],
       stock: '',
     });
+    setUploadedImages([]);
     setShowAddProduct(false);
     
     toast({
@@ -158,15 +184,59 @@ const AdminProducts: React.FC = () => {
                 className="w-full h-20 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white resize-none"
               />
             </div>
-            <div className="md:col-span-2">
-              <Label htmlFor="images">Image URL</Label>
-              <Input
-                id="images"
-                value={productForm.images[0]}
-                onChange={(e) => setProductForm(prev => ({ ...prev, images: [e.target.value] }))}
-                className="bg-gray-700 border-gray-600"
-                placeholder="https://example.com/image.jpg"
-              />
+            
+            <div className="md:col-span-2 space-y-4">
+              <Label>Product Images</Label>
+              
+              <div className="flex items-center gap-4">
+                <Button type="button" variant="outline" className="flex items-center gap-2" asChild>
+                  <label htmlFor="image-upload" className="cursor-pointer">
+                    <Upload className="h-4 w-4" />
+                    Upload Images
+                  </label>
+                </Button>
+                <input
+                  id="image-upload"
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+                <span className="text-sm text-gray-400">or enter URLs below</span>
+              </div>
+
+              {uploadedImages.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {uploadedImages.map((image, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={image}
+                        alt={`Upload ${index + 1}`}
+                        className="w-full h-24 object-cover rounded border border-gray-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeUploadedImage(index)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div>
+                <Label htmlFor="images">Image URL</Label>
+                <Input
+                  id="images"
+                  value={productForm.images[0]}
+                  onChange={(e) => setProductForm(prev => ({ ...prev, images: [e.target.value] }))}
+                  className="bg-gray-700 border-gray-600"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
             </div>
           </div>
           
