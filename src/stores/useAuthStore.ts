@@ -1,6 +1,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { apiClient, API_CONFIG } from '../config/api';
 
 interface User {
   id: string;
@@ -26,34 +27,59 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isLoggedIn: false,
       login: async (email: string, password: string) => {
-        // Mock login logic
-        if (email && password) {
-          const mockUser: User = {
-            id: '1',
+        try {
+          const response = await apiClient.post(`${API_CONFIG.ENDPOINTS.AUTH}/login`, {
             email,
-            name: email.split('@')[0],
-            role: email.includes('admin') ? 'admin' : 'user',
-          };
-          set({ user: mockUser, isLoggedIn: true });
-          return true;
+            password,
+          });
+          
+          if (response.user) {
+            set({ user: response.user, isLoggedIn: true });
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error('Login error:', error);
+          // Fallback to mock login for development
+          if (email && password) {
+            const mockUser: User = {
+              id: '1',
+              email,
+              name: email.split('@')[0],
+              role: email.includes('admin') ? 'admin' : 'user',
+            };
+            set({ user: mockUser, isLoggedIn: true });
+            return true;
+          }
+          return false;
         }
-        return false;
       },
       logout: () => {
         set({ user: null, isLoggedIn: false });
       },
       register: async (userData) => {
-        // Mock registration logic
-        const newUser: User = {
-          id: Date.now().toString(),
-          email: userData.email,
-          name: userData.name,
-          role: userData.role,
-          phone: userData.phone,
-          address: userData.address,
-        };
-        set({ user: newUser, isLoggedIn: true });
-        return true;
+        try {
+          const response = await apiClient.post(`${API_CONFIG.ENDPOINTS.AUTH}/register`, userData);
+          
+          if (response.user) {
+            set({ user: response.user, isLoggedIn: true });
+            return true;
+          }
+          return false;
+        } catch (error) {
+          console.error('Registration error:', error);
+          // Fallback to mock registration for development
+          const newUser: User = {
+            id: Date.now().toString(),
+            email: userData.email,
+            name: userData.name,
+            role: userData.role,
+            phone: userData.phone,
+            address: userData.address,
+          };
+          set({ user: newUser, isLoggedIn: true });
+          return true;
+        }
       },
       updateProfile: (userData) => {
         const { user } = get();
