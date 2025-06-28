@@ -2,20 +2,14 @@ import { Product } from '@/types/store';
 import axios from 'axios';
 
 export const ENDPOINTS: {
-  readonly AUTH: {
-    readonly USER: string,
-    readonly ADMIN: string
-  };
+  readonly AUTH: string;
   readonly CART: string;
   readonly PRODUCTS: string;
   readonly PRODUCT: string;
   readonly ORDERS: string;
   readonly USERS: string;
 } = {
-  AUTH: {
-    USER: '/auth',
-    ADMIN: '/auth/admin'
-  },
+  AUTH: '/auth',
   PRODUCTS: '/products',
   PRODUCT: '/products/:id',
   ORDERS: '/orders',
@@ -25,11 +19,13 @@ export const ENDPOINTS: {
 };
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:7000/api",
+  baseURL: import.meta.env.BASE_URL,
+  withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json'
   },
 });
+
 
 export const apiClient = {
   get: async (endpoint: string) => {
