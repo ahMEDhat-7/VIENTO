@@ -1,20 +1,13 @@
 
 export interface Product {
-  id: string;
   name: string;
   description: string;
   price: number;
-  categoryId: string;
   brand: string;
-  tags: string[];
-  images: string[];
+  imageUrl: string;
   stock: number;
   variants: ProductVariant[];
   isAvailable: boolean;
-  discount?: {
-    percent: number;
-    validUntil: string;
-  };
   analytics: {
     views: number;
     purchases: number;
@@ -23,13 +16,6 @@ export interface Product {
     lastViewedAt?: string;
     lastPurchasedAt?: string;
   };
-  seo: {
-    slug: string;
-    metaTitle: string;
-    metaDescription: string;
-  };
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface ProductVariant {

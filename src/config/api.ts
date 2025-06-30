@@ -19,13 +19,12 @@ export const ENDPOINTS: {
 };
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.BASE_URL,
+  baseURL: "http://localhost:7000/api",
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json'
+    "Content-Type": "application/json",
   },
 });
-
 
 export const apiClient = {
   get: async (endpoint: string) => {
@@ -33,12 +32,14 @@ export const apiClient = {
     return response.data;
   },
 
-  post: async (endpoint: string, data: unknown) => {
+  post: async (endpoint: string, data: {}) => {
     const response = await axiosInstance.post(endpoint, data);
+    console.log(response);
+
     return response.data;
   },
 
-  patch: async (endpoint: string, data: any) => {
+  patch: async (endpoint: string, data: {}) => {
     const response = await axiosInstance.patch(endpoint, data);
     return response.data;
   },
