@@ -1,13 +1,21 @@
 
 export interface Product {
+  id: string;
   name: string;
   description: string;
   price: number;
   brand: string;
-  imageUrl: string;
+  categoryId: string;
+  images: string[];
+  imageUrl?: string; // Keep for backward compatibility
   stock: number;
   variants: ProductVariant[];
   isAvailable: boolean;
+  tags: string[];
+  discount?: {
+    percent: number;
+    validUntil?: string;
+  };
   analytics: {
     views: number;
     purchases: number;
@@ -16,6 +24,13 @@ export interface Product {
     lastViewedAt?: string;
     lastPurchasedAt?: string;
   };
+  seo?: {
+    slug: string;
+    metaTitle: string;
+    metaDescription: string;
+  };
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ProductVariant {
@@ -49,15 +64,18 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   role: 'user' | 'admin';
-  status: 'active' | 'inactive';
-  addresses: Address[];
-  wishlist: string[];
+  status?: 'active' | 'inactive';
+  addresses?: Address[];
+  wishlist?: string[];
+  phone?: string;
+  address?: string;
+  token?: string;
   lastLogin?: string;
-  loginCount: number;
-  createdAt: string;
-  updatedAt: string;
+  loginCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Address {
