@@ -97,8 +97,11 @@ const AddProductForm: React.FC = () => {
       analytics: {
         views: 0,
         purchases: 0,
+        averageRating: 0,
         ratingsCount: 0,
       },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     // Send only the DTO to the backend

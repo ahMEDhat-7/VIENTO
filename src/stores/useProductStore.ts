@@ -50,6 +50,7 @@ export const useProductStore = create<ProductsState>((set, get) => ({
       analytics: {
         views: 0,
         purchases: 0,
+        averageRating: 0,
         ratingsCount: 0,
       },
     };

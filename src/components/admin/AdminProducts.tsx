@@ -73,6 +73,7 @@ const AdminProducts: React.FC = () => {
       analytics: {
         views: 0,
         purchases: 0,
+        averageRating: 0,
         ratingsCount: 0,
       },
     });

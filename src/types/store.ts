@@ -29,12 +29,6 @@ export interface Product {
   stock: number;
   variants: ProductVariant[];
   isAvailable: boolean;
-<<<<<<< HEAD
-  analytics: ProductAnalytics;
-  discount?: ProductDiscount;
-  tags?: string[];
-  images?: string[];
-=======
   tags: string[];
   discount?: {
     percent: number;
@@ -61,7 +55,6 @@ export interface ProductVariant {
   color: string;
   size: string;
   stock: number;
->>>>>>> bf781a570c3647afcbd000b47a734a251de5a479
 }
 
 export interface Category {
@@ -89,13 +82,6 @@ export interface User {
   id: string;
   name: string;
   email: string;
-<<<<<<< HEAD
-  password: string;
-  role: "user" | "admin";
-  status: "active" | "inactive";
-  addresses: Address[];
-  wishlist: string[];
-=======
   password?: string;
   role: 'user' | 'admin';
   status?: 'active' | 'inactive';
@@ -104,7 +90,6 @@ export interface User {
   phone?: string;
   address?: string;
   token?: string;
->>>>>>> bf781a570c3647afcbd000b47a734a251de5a479
   lastLogin?: string;
   loginCount?: number;
   createdAt?: string;
