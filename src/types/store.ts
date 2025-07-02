@@ -1,5 +1,24 @@
+export interface ProductVariant {
+  color: string;
+  size: string;
+  stock: number;
+}
+
+export interface ProductAnalytics {
+  views: number;
+  purchases: number;
+  ratingsCount: number;
+  lastViewedAt?: string;
+  lastPurchasedAt?: string;
+}
+
+export interface ProductDiscount {
+  percent: number;
+  validUntil: string;
+}
 
 export interface Product {
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -8,20 +27,10 @@ export interface Product {
   stock: number;
   variants: ProductVariant[];
   isAvailable: boolean;
-  analytics: {
-    views: number;
-    purchases: number;
-    averageRating: number;
-    ratingsCount: number;
-    lastViewedAt?: string;
-    lastPurchasedAt?: string;
-  };
-}
-
-export interface ProductVariant {
-  color: string;
-  size: string;
-  stock: number;
+  analytics: ProductAnalytics;
+  discount?: ProductDiscount;
+  tags?: string[];
+  images?: string[];
 }
 
 export interface Category {
@@ -50,8 +59,8 @@ export interface User {
   name: string;
   email: string;
   password: string;
-  role: 'user' | 'admin';
-  status: 'active' | 'inactive';
+  role: "user" | "admin";
+  status: "active" | "inactive";
   addresses: Address[];
   wishlist: string[];
   lastLogin?: string;
@@ -76,8 +85,8 @@ export interface Order {
   items: OrderItem[];
   total: number;
   paymentMethod: string;
-  paymentStatus: 'unpaid' | 'paid' | 'refunded';
-  status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: "unpaid" | "paid" | "refunded";
+  status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
   tracking?: {
     courier: string;
     trackingNumber: string;
@@ -107,7 +116,7 @@ export interface Review {
   rating: number;
   comment: string;
   images?: string[];
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
   createdAt: string;
 }
 
@@ -125,7 +134,7 @@ export interface Coupon {
 export interface Notification {
   id: string;
   userId: string;
-  type: 'order_update' | 'promo' | 'admin_message';
+  type: "order_update" | "promo" | "admin_message";
   message: string;
   read: boolean;
   createdAt: string;

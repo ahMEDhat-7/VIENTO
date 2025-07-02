@@ -81,7 +81,8 @@ const AddProductForm: React.FC = () => {
 
     const totalStock = parseInt(formData.stock) || 0;
 
-    const newProduct: Product = {
+    // Only include fields required by CreateProductDto
+    const newProductDto = {
       name: formData.name,
       brand: formData.brand,
       price: parseFloat(formData.price),
@@ -93,13 +94,17 @@ const AddProductForm: React.FC = () => {
       analytics: {
         views: 0,
         purchases: 0,
-        averageRating: 0,
+        averageRating: 0, // Not in DTO, but kept for compatibility
         ratingsCount: 0,
       },
     };
 
-    await apiClient.post(ENDPOINTS.PRODUCTS, newProduct);
-    setProducts([...products, newProduct]);
+    // Send only the DTO to the backend
+    const createdProduct = await apiClient.post(
+      ENDPOINTS.PRODUCTS,
+      newProductDto
+    );
+    setProducts([...products, createdProduct]);
 
     setFormData({
       name: "",

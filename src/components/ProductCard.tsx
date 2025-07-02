@@ -54,7 +54,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isOutOfStock = totalStock === 0 || !product.isAvailable;
 
   return (
-    <Link to={`/products/${product.id}`} onClick={handleProductClick} className="block group">
+    <Link
+      to={`/products/${product.id}`}
+      onClick={handleProductClick}
+      className="block group"
+    >
       <div className="bg-card rounded-lg overflow-hidden border border-border hover:border-amber-500/50 transition-all duration-300 group-hover:transform group-hover:scale-105 shadow-sm">
         <div className="aspect-square overflow-hidden relative">
           <img
@@ -71,9 +75,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </Badge>
             )}
             {product.analytics.views > 100 && (
-              <Badge className="bg-blue-500 text-white">
-                Popular
-              </Badge>
+              <Badge className="bg-blue-500 text-white">Popular</Badge>
             )}
           </div>
 
@@ -125,10 +127,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-3 h-3 ${i < Math.floor(product.analytics.averageRating)
-                    ? 'text-amber-400 fill-current'
-                    : 'text-muted-foreground'
-                    }`}
+                  className={`w-3 h-3 ${
+                    i < Math.floor(product.analytics.ratingsCount)
+                      ? "text-amber-400 fill-current"
+                      : "text-muted-foreground"
+                  }`}
                 />
               ))}
             </div>
@@ -149,34 +152,45 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
               )}
             </div>
-            <span className={`text-xs px-2 py-1 rounded-full ${totalStock > 10
-              ? 'bg-green-500/20 text-green-400'
-              : totalStock > 0
-                ? 'bg-yellow-500/20 text-yellow-400'
-                : 'bg-red-500/20 text-red-400'
-              }`}>
-              {totalStock > 0 ? `${totalStock} left` : 'Out of stock'}
+            <span
+              className={`text-xs px-2 py-1 rounded-full ${
+                totalStock > 10
+                  ? "bg-green-500/20 text-green-400"
+                  : totalStock > 0
+                  ? "bg-yellow-500/20 text-yellow-400"
+                  : "bg-red-500/20 text-red-400"
+              }`}
+            >
+              {totalStock > 0 ? `${totalStock} left` : "Out of stock"}
             </span>
           </div>
 
           {/* Variants preview */}
           <div className="flex items-center gap-1 mb-3">
             <span className="text-xs text-muted-foreground">Colors:</span>
-            {[...new Set(product.variants.map(v => v.color))].slice(0, 3).map((color) => (
-              <div
-                key={color}
-                className="w-4 h-4 rounded-full border border-border"
-                style={{
-                  backgroundColor: color.toLowerCase() === 'white' ? '#ffffff' :
-                    color.toLowerCase() === 'black' ? '#000000' :
-                      color.toLowerCase() === 'navy' ? '#001f3f' :
-                        color.toLowerCase() === 'gray' ? '#808080' :
-                          color.toLowerCase() === 'red' ? '#ff0000' :
-                            color.toLowerCase()
-                }}
-                title={color}
-              />
-            ))}
+            {[...new Set(product.variants.map((v) => v.color))]
+              .slice(0, 3)
+              .map((color) => (
+                <div
+                  key={color}
+                  className="w-4 h-4 rounded-full border border-border"
+                  style={{
+                    backgroundColor:
+                      color.toLowerCase() === "white"
+                        ? "#ffffff"
+                        : color.toLowerCase() === "black"
+                        ? "#000000"
+                        : color.toLowerCase() === "navy"
+                        ? "#001f3f"
+                        : color.toLowerCase() === "gray"
+                        ? "#808080"
+                        : color.toLowerCase() === "red"
+                        ? "#ff0000"
+                        : color.toLowerCase(),
+                  }}
+                  title={color}
+                />
+              ))}
           </div>
 
           <Button
@@ -186,7 +200,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold disabled:opacity-50"
           >
             <ShoppingCart className="w-4 h-4 mr-1" />
-            {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
           </Button>
         </div>
       </div>

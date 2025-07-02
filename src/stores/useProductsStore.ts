@@ -1,17 +1,19 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Product, Category } from '../types/store';
-import { useEffect } from "react";
-import { apiClient } from "../config/api";
+import { Product, Category } from "../types/store";
+import { apiClient, ENDPOINTS } from "../config/api";
 
 interface ProductsState {
   products: Product[];
   categories: Category[];
   brands: string[];
   setProducts: (products: Product[]) => void;
-  addProduct: (product: Product) => void;
-  updateProduct: (id: string, updates: Partial<Product>) => void;
-  deleteProduct: (id: string) => void;
+  fetchProducts: () => Promise<void>;
+  addProduct: (
+    product: Omit<Product, "id" | "createdAt" | "updatedAt">
+  ) => Promise<void>;
+  updateProduct: (id: string, updates: Partial<Product>) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
   getProductById: (id: string) => Product | undefined;
 }
 
@@ -22,35 +24,55 @@ export const useProductsStore = create<ProductsState>()(
       categories: [],
       brands: [],
       setProducts: (products) => set({ products }),
-      addProduct: (product) => {
-        const newProduct = {
-          ...product,
-          id: Date.now().toString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        set(state => ({ products: [...state.products, newProduct] }));
+      fetchProducts: async () => {
+        try {
+          const data = await apiClient.get(ENDPOINTS.PRODUCTS);
+          set({ products: data });
+        } catch (error) {
+          console.error("Failed to fetch products:", error);
+        }
       },
-      updateProduct: (id, updates) => {
-        set(state => ({
-          products: state.products.map(p =>
-            p.id === id
-              ? { ...p, ...updates, updatedAt: new Date().toISOString() }
-              : p
-          )
-        }));
+      addProduct: async (product) => {
+        try {
+          const newProduct = await apiClient.post(ENDPOINTS.PRODUCTS, product);
+          set((state) => ({
+            products: [...state.products, newProduct],
+          }));
+        } catch (error) {
+          console.error("Failed to add product:", error);
+        }
       },
-      deleteProduct: (id) => {
-        set(state => ({
-          products: state.products.filter(p => p.id !== id)
-        }));
+      updateProduct: async (id, updates) => {
+        try {
+          const updatedProduct = await apiClient.patch(
+            `${ENDPOINTS.PRODUCT}/${id}`,
+            updates
+          );
+          set((state) => ({
+            products: state.products.map((p) =>
+              p.id === id ? updatedProduct : p
+            ),
+          }));
+        } catch (error) {
+          console.error("Failed to update product:", error);
+        }
+      },
+      deleteProduct: async (id) => {
+        try {
+          await apiClient.delete(`${ENDPOINTS.PRODUCT}/${id}`);
+          set((state) => ({
+            products: state.products.filter((p) => p.id !== id),
+          }));
+        } catch (error) {
+          console.error("Failed to delete product:", error);
+        }
       },
       getProductById: (id) => {
-        return get().products.find(p => p.id === id);
+        return get().products.find((p) => p.id === id);
       },
     }),
     {
-      name: 'products-storage',
+      name: "products-storage",
     }
   )
 );
