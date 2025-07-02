@@ -12,13 +12,13 @@ const Dashboard: React.FC = () => {
   const { toast } = useToast();
   const { user, updateProfile, logout } = useAuthStore();
   const { getUserOrders } = useOrderStore();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: user?.phone || '',
-    address: user?.address || '',
+    // phone: user?.phone || '',
+    // address: user?.address || '',
   });
 
   const orders = user ? getUserOrders(user.email) : [];
@@ -36,8 +36,8 @@ const Dashboard: React.FC = () => {
     setEditForm({
       name: user?.name || '',
       email: user?.email || '',
-      phone: user?.phone || '',
-      address: user?.address || '',
+      // phone: user?.phone || '',
+      // address: user?.address || '',
     });
     setIsEditing(false);
   };
@@ -148,7 +148,7 @@ const Dashboard: React.FC = () => {
                   )}
                 </div>
 
-                <div>
+                {/* <div>
                   <Label htmlFor="phone">Phone</Label>
                   {isEditing ? (
                     <Input
@@ -174,7 +174,7 @@ const Dashboard: React.FC = () => {
                   ) : (
                     <p className="text-gray-300 mt-1">{user.address || 'Not provided'}</p>
                   )}
-                </div>
+                </div> */}
 
                 <div className="pt-4 border-t border-gray-700">
                   <p className="text-sm text-gray-400">

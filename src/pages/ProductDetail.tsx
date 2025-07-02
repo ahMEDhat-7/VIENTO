@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,7 @@ const ProductDetail: React.FC = () => {
   const { toast } = useToast();
   const { getProductById } = useProductStore();
   const { addToCart } = useCartStore();
-  
+
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -51,7 +50,7 @@ const ProductDetail: React.FC = () => {
       });
       return;
     }
-    
+
     addToCart(product, selectedSize, selectedColor, quantity);
     toast({
       title: "Added to cart",
@@ -59,15 +58,15 @@ const ProductDetail: React.FC = () => {
     });
   };
 
-  const discountedPrice = product.discount 
+  const discountedPrice = product.discount
     ? product.price * (1 - product.discount.percent / 100)
     : product.price;
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => navigate('/products')}
           className="mb-6 text-muted-foreground hover:text-foreground"
         >
@@ -91,9 +90,8 @@ const ProductDetail: React.FC = () => {
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                      selectedImage === index ? 'border-amber-500' : 'border-border'
-                    }`}
+                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${selectedImage === index ? 'border-amber-500' : 'border-border'
+                      }`}
                   >
                     <img src={image} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -126,9 +124,8 @@ const ProductDetail: React.FC = () => {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-5 h-5 ${
-                      i < Math.floor(product.analytics.averageRating) ? 'text-amber-400 fill-current' : 'text-muted-foreground'
-                    }`}
+                    className={`w-5 h-5 ${i < 0 ? 'text-amber-400 fill-current' : 'text-muted-foreground'
+                      }`}
                   />
                 ))}
               </div>
@@ -145,11 +142,10 @@ const ProductDetail: React.FC = () => {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 rounded-lg border ${
-                      selectedSize === size
-                        ? 'border-amber-500 bg-amber-500/20 text-amber-400'
-                        : 'border-border text-muted-foreground hover:border-muted-foreground'
-                    }`}
+                    className={`px-4 py-2 rounded-lg border ${selectedSize === size
+                      ? 'border-amber-500 bg-amber-500/20 text-amber-400'
+                      : 'border-border text-muted-foreground hover:border-muted-foreground'
+                      }`}
                   >
                     {size}
                   </button>
@@ -165,11 +161,10 @@ const ProductDetail: React.FC = () => {
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color)}
-                    className={`px-4 py-2 rounded-lg border ${
-                      selectedColor === color
-                        ? 'border-amber-500 bg-amber-500/20 text-amber-400'
-                        : 'border-border text-muted-foreground hover:border-muted-foreground'
-                    }`}
+                    className={`px-4 py-2 rounded-lg border ${selectedColor === color
+                      ? 'border-amber-500 bg-amber-500/20 text-amber-400'
+                      : 'border-border text-muted-foreground hover:border-muted-foreground'
+                      }`}
                   >
                     {color}
                   </button>
