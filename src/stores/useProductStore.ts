@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { Product, Category } from '../types/store';
 import { useEffect } from 'react';
@@ -51,16 +50,8 @@ export const useProductStore = create<ProductsState>((set, get) => ({
       analytics: {
         views: 0,
         purchases: 0,
-        averageRating: 0,
         ratingsCount: 0,
       },
-      seo: {
-        slug: productData.name.toLowerCase().replace(/\s+/g, '-'),
-        metaTitle: productData.name,
-        metaDescription: productData.description
-      },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
     };
     set(state => ({
       products: [...state.products, newProduct],
@@ -140,7 +131,7 @@ export const useProductStore = create<ProductsState>((set, get) => ({
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'rating':
-        filtered.sort((a, b) => b.analytics.averageRating - a.analytics.averageRating);
+        filtered.sort((a, b) => b.analytics.ratingsCount - a.analytics.ratingsCount);
         break;
       case 'name':
         filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -150,7 +141,7 @@ export const useProductStore = create<ProductsState>((set, get) => ({
         break;
       case 'newest':
       default:
-        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        filtered.sort((a, b) => Number(b.id) - Number(a.id));
         break;
     }
 
