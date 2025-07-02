@@ -23,14 +23,45 @@ export interface Product {
   description: string;
   price: number;
   brand: string;
-  imageUrl: string;
+  categoryId: string;
+  images: string[];
+  imageUrl?: string; // Keep for backward compatibility
   stock: number;
   variants: ProductVariant[];
   isAvailable: boolean;
+<<<<<<< HEAD
   analytics: ProductAnalytics;
   discount?: ProductDiscount;
   tags?: string[];
   images?: string[];
+=======
+  tags: string[];
+  discount?: {
+    percent: number;
+    validUntil?: string;
+  };
+  analytics: {
+    views: number;
+    purchases: number;
+    averageRating: number;
+    ratingsCount: number;
+    lastViewedAt?: string;
+    lastPurchasedAt?: string;
+  };
+  seo?: {
+    slug: string;
+    metaTitle: string;
+    metaDescription: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductVariant {
+  color: string;
+  size: string;
+  stock: number;
+>>>>>>> bf781a570c3647afcbd000b47a734a251de5a479
 }
 
 export interface Category {
@@ -58,15 +89,26 @@ export interface User {
   id: string;
   name: string;
   email: string;
+<<<<<<< HEAD
   password: string;
   role: "user" | "admin";
   status: "active" | "inactive";
   addresses: Address[];
   wishlist: string[];
+=======
+  password?: string;
+  role: 'user' | 'admin';
+  status?: 'active' | 'inactive';
+  addresses?: Address[];
+  wishlist?: string[];
+  phone?: string;
+  address?: string;
+  token?: string;
+>>>>>>> bf781a570c3647afcbd000b47a734a251de5a479
   lastLogin?: string;
-  loginCount: number;
-  createdAt: string;
-  updatedAt: string;
+  loginCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Address {

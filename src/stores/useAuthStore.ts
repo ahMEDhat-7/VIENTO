@@ -3,11 +3,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { apiClient, ENDPOINTS } from '../config/api';
 
-interface User {
-  id: string;
-  email: string;
-  name: string;
-}
+import { User } from '../types/store';
 
 interface AuthState {
   user: User | null;
@@ -15,7 +11,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   register: (
-    userData: Omit<User, "id"> & { password: string }
+    userData: { name: string; email: string; password: string }
   ) => Promise<boolean>;
   updateProfile: (userData: Partial<User>) => void;
 }
@@ -27,20 +23,19 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
       login: async (email: string, password: string) => {
         try {
-          console.log(`${ENDPOINTS.AUTH}/login`);
-
-          const response = await apiClient.post(`${ENDPOINTS.AUTH}/login`, {
+          const response = await apiClient.post(ENDPOINTS.AUTH.LOGIN, {
             email,
             password,
           });
 
           if (response.user) {
-            set({ user: response.user, isLoggedIn: true });
+            set({ user: { ...response.user, token: response.token }, isLoggedIn: true });
             return true;
           }
           return false;
         } catch (error) {
           console.error("Login error:", error);
+          return false;
         }
       },
       logout: () => {
@@ -48,19 +43,20 @@ export const useAuthStore = create<AuthState>()(
       },
       register: async (userData) => {
         try {
-          const response = await apiClient.post(`${ENDPOINTS.AUTH}/register`, {
+          const response = await apiClient.post(ENDPOINTS.AUTH.REGISTER, {
             username: userData.name,
             email: userData.email,
             password: userData.password,
           });
 
           if (response.user) {
-            set({ user: response.user, isLoggedIn: true });
+            set({ user: { ...response.user, token: response.token }, isLoggedIn: true });
             return true;
           }
           return false;
         } catch (error) {
           console.error("Registration error:", error);
+          return false;
         }
       },
       updateProfile: (userData) => {

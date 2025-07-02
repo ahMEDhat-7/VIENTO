@@ -1,22 +1,22 @@
 import { Product } from '@/types/store';
 import axios from 'axios';
 
-export const ENDPOINTS: {
-  readonly AUTH: string;
-  readonly CART: string;
-  readonly PRODUCTS: string;
-  readonly PRODUCT: string;
-  readonly ORDERS: string;
-  readonly USERS: string;
-} = {
-  AUTH: '/auth',
+export const ENDPOINTS = {
+  AUTH: {
+    LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
+    REGISTER_ADMIN: '/auth/register-admin',
+    PROFILE: '/auth/profile',
+    REFRESH: '/auth/refresh',
+    LOGOUT: '/auth/logout',
+  },
   PRODUCTS: '/products',
-  PRODUCT: '/products/:id',
-  ORDERS: '/orders',
-  CART: "/cart",
   USERS: '/users',
-
-};
+  ORDERS: '/orders',
+  CART: '/cart',
+  REVIEWS: '/reviews',
+  NOTIFICATIONS: '/notifications',
+} as const;
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:7000/api",
@@ -25,6 +25,25 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Add request interceptor to include auth token
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const authData = localStorage.getItem('auth-storage');
+    if (authData) {
+      try {
+        const { state } = JSON.parse(authData);
+        if (state?.user?.token) {
+          config.headers.Authorization = `Bearer ${state.user.token}`;
+        }
+      } catch (error) {
+        console.error('Error parsing auth data:', error);
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export const apiClient = {
   get: async (endpoint: string) => {

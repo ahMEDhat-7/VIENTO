@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { CartItem } from '../types/store';
-import { useEffect } from "react";
-import { apiClient } from "@/config/api";
+import { apiClient, ENDPOINTS } from "@/config/api";
 
 export interface Order {
   id: string;
@@ -23,28 +22,66 @@ export interface Order {
 
 interface OrderState {
   orders: Order[];
-  createOrder: (orderData: Omit<Order, 'id' | 'createdAt' | 'status'>) => string;
+  loading: boolean;
+  error: string | null;
+  createOrder: (orderData: Omit<Order, 'id' | 'createdAt' | 'status'>) => Promise<string | null>;
+  fetchOrders: () => Promise<void>;
+  fetchUserOrders: (userId: string) => Promise<void>;
   getOrderById: (id: string) => Order | undefined;
   getUserOrders: (email: string) => Order[];
-  updateOrderStatus: (id: string, status: Order['status']) => void;
+  updateOrderStatus: (id: string, status: Order['status']) => Promise<boolean>;
 }
 
 export const useOrderStore = create<OrderState>()(
   persist(
     (set, get) => ({
       orders: [],
-      createOrder: (orderData) => {
-        const orderId = Date.now().toString();
-        const newOrder: Order = {
-          ...orderData,
-          id: orderId,
-          createdAt: new Date().toISOString(),
-          status: 'pending',
-        };
-        set(state => ({
-          orders: [...state.orders, newOrder]
-        }));
-        return orderId;
+      loading: false,
+      error: null,
+      createOrder: async (orderData) => {
+        try {
+          set({ loading: true, error: null });
+          const response = await apiClient.post(ENDPOINTS.ORDERS, orderData);
+          if (response?.id) {
+            const newOrder: Order = {
+              ...orderData,
+              id: response.id,
+              createdAt: new Date().toISOString(),
+              status: 'pending',
+            };
+            set(state => ({
+              orders: [...state.orders, newOrder],
+              loading: false
+            }));
+            return response.id;
+          }
+          set({ loading: false });
+          return null;
+        } catch (error) {
+          set({ error: 'Failed to create order', loading: false });
+          console.error('Failed to create order:', error);
+          return null;
+        }
+      },
+      fetchOrders: async () => {
+        try {
+          set({ loading: true, error: null });
+          const orders = await apiClient.get(ENDPOINTS.ORDERS);
+          set({ orders: orders || [], loading: false });
+        } catch (error) {
+          set({ error: 'Failed to fetch orders', loading: false });
+          console.error('Failed to fetch orders:', error);
+        }
+      },
+      fetchUserOrders: async (userId) => {
+        try {
+          set({ loading: true, error: null });
+          const orders = await apiClient.get(`${ENDPOINTS.ORDERS}/user/${userId}`);
+          set({ orders: orders || [], loading: false });
+        } catch (error) {
+          set({ error: 'Failed to fetch user orders', loading: false });
+          console.error('Failed to fetch user orders:', error);
+        }
       },
       getOrderById: (id) => {
         return get().orders.find(order => order.id === id);
@@ -52,12 +89,22 @@ export const useOrderStore = create<OrderState>()(
       getUserOrders: (email) => {
         return get().orders.filter(order => order.customerInfo.email === email);
       },
-      updateOrderStatus: (id, status) => {
-        set(state => ({
-          orders: state.orders.map(order =>
-            order.id === id ? { ...order, status } : order
-          )
-        }));
+      updateOrderStatus: async (id, status) => {
+        try {
+          set({ loading: true, error: null });
+          await apiClient.patch(`${ENDPOINTS.ORDERS}/${id}/status`, { status });
+          set(state => ({
+            orders: state.orders.map(order =>
+              order.id === id ? { ...order, status } : order
+            ),
+            loading: false
+          }));
+          return true;
+        } catch (error) {
+          set({ error: 'Failed to update order status', loading: false });
+          console.error('Failed to update order status:', error);
+          return false;
+        }
       },
     }),
     {
