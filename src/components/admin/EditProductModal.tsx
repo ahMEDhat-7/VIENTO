@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +17,7 @@ interface EditProductModalProps {
 
 const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, onClose }) => {
   const { categories, brands } = useProductsStore();
-  
+
   const [formData, setFormData] = useState({
     name: product.name,
     brand: product.brand,
@@ -50,8 +49,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, 
       images: formData.images.split(',').map(url => url.trim()),
       variants: formData.variants,
       stock: totalStock,
-      isAvailable: formData.isAvailable,
-      updatedAt: new Date().toISOString()
+      isAvailable: formData.isAvailable
     };
 
     onUpdate(updatedProduct);
@@ -70,9 +68,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, 
   };
 
   const removeVariant = (index: number) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      variants: prev.variants.filter((_, i) => i !== index) 
+    setFormData(prev => ({
+      ...prev,
+      variants: prev.variants.filter((_, i) => i !== index)
     }));
   };
 
@@ -82,7 +80,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, 
         <DialogHeader>
           <DialogTitle>Edit Product</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -158,7 +156,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, 
           {/* Product Variants Section */}
           <div className="space-y-4">
             <Label>Product Variants</Label>
-            
+
             <div className="grid grid-cols-4 gap-2">
               <Select value={newVariant.color} onValueChange={(value) => setNewVariant(prev => ({ ...prev, color: value }))}>
                 <SelectTrigger>
@@ -170,7 +168,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, 
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={newVariant.size} onValueChange={(value) => setNewVariant(prev => ({ ...prev, size: value }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Size" />
@@ -181,14 +179,14 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onUpdate, 
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Input
                 type="number"
                 placeholder="Stock"
                 value={newVariant.stock}
                 onChange={(e) => setNewVariant(prev => ({ ...prev, stock: e.target.value }))}
               />
-              
+
               <Button type="button" onClick={addVariant}>Add</Button>
             </div>
 
