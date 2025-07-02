@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,10 +9,10 @@ import { Plus, Edit, Trash2, Upload, X } from 'lucide-react';
 const AdminProducts: React.FC = () => {
   const { toast } = useToast();
   const { products, addProduct, deleteProduct, loading } = useProductsStore();
-  
+
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
-  
+
   const [productForm, setProductForm] = useState({
     name: '',
     brand: 'VIENTO',
@@ -59,7 +58,7 @@ const AdminProducts: React.FC = () => {
       ...productForm.images.filter(img => img.trim() !== '')
     ];
 
-    const success = await addProduct({
+    await addProduct({
       name: productForm.name,
       brand: productForm.brand,
       categoryId: productForm.categoryId,
@@ -74,24 +73,9 @@ const AdminProducts: React.FC = () => {
       analytics: {
         views: 0,
         purchases: 0,
-        averageRating: 0,
         ratingsCount: 0,
       },
-      seo: {
-        slug: productForm.name.toLowerCase().replace(/\s+/g, '-'),
-        metaTitle: productForm.name,
-        metaDescription: productForm.description
-      },
     });
-
-    if (!success) {
-      toast({
-        title: "Failed to add product",
-        description: "Please try again",
-        variant: "destructive",
-      });
-      return;
-    }
 
     // Reset form
     setProductForm({
@@ -106,7 +90,7 @@ const AdminProducts: React.FC = () => {
     });
     setUploadedImages([]);
     setShowAddProduct(false);
-    
+
     toast({
       title: "Product added",
       description: "Product has been added successfully",
@@ -114,19 +98,11 @@ const AdminProducts: React.FC = () => {
   };
 
   const handleDeleteProduct = async (id: string) => {
-    const success = await deleteProduct(id);
-    if (success) {
-      toast({
-        title: "Product deleted",
-        description: "Product has been deleted successfully",
-      });
-    } else {
-      toast({
-        title: "Failed to delete product",
-        description: "Please try again",
-        variant: "destructive",
-      });
-    }
+    await deleteProduct(id);
+    toast({
+      title: "Product deleted",
+      description: "Product has been deleted successfully",
+    });
   };
 
   return (
@@ -199,10 +175,10 @@ const AdminProducts: React.FC = () => {
                 className="w-full h-20 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white resize-none"
               />
             </div>
-            
+
             <div className="md:col-span-2 space-y-4">
               <Label>Product Images</Label>
-              
+
               <div className="flex items-center gap-4">
                 <Button type="button" variant="outline" className="flex items-center gap-2" asChild>
                   <label htmlFor="image-upload" className="cursor-pointer">
@@ -241,7 +217,7 @@ const AdminProducts: React.FC = () => {
                   ))}
                 </div>
               )}
-              
+
               <div>
                 <Label htmlFor="images">Image URL</Label>
                 <Input
@@ -254,10 +230,10 @@ const AdminProducts: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="flex space-x-3 mt-6">
-            <Button 
-              onClick={handleAddProduct} 
+            <Button
+              onClick={handleAddProduct}
               className="bg-green-600 hover:bg-green-700"
               disabled={loading}
             >
@@ -281,7 +257,7 @@ const AdminProducts: React.FC = () => {
             <h3 className="text-white font-semibold mb-2">{product.name}</h3>
             <p className="text-amber-400 font-bold mb-2">${product.price}</p>
             <p className="text-gray-400 text-sm mb-4">Stock: {product.stock || 0}</p>
-            
+
             <div className="flex space-x-2">
               <Button
                 size="sm"
