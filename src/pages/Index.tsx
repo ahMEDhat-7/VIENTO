@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Star, Truck, Shield, Headphones } from 'lucide-react';
-import { useProductStore } from '../stores/useProductStore';
+import { useProductsStore } from '../stores/useProductsStore';
 import ProductCard from '../components/ProductCard';
 import Footer from '../components/Footer';
 
 const Index: React.FC = () => {
-  const { products } = useProductStore();
+  const { products, fetchProducts } = useProductsStore();
+  useEffect(() => {
+    fetchProducts();
+  }, []);
   const featuredProducts = products.slice(0, 4);
 
   return (
@@ -27,7 +30,7 @@ const Index: React.FC = () => {
       {/* Featured Products */}
       < section className="py-16 px-4 sm:px-6 lg:px-8" >
         <div className="max-w-7xl mx-auto">
-          {/* <div className="text-center mb-12">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent mb-4">
               Featured Products
             </h2>
@@ -38,7 +41,7 @@ const Index: React.FC = () => {
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div> */}
+          </div>
 
           <div className="text-center">
             <Link to="/products">

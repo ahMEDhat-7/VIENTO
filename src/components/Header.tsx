@@ -12,7 +12,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const { items } = useCartStore();
   const { user, logout } = useAuthStore();
-  
+
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleLogout = () => {
@@ -39,12 +39,7 @@ const Header: React.FC = () => {
             >
               Home
             </Link>
-            <Link
-              to="/products"
-              className="text-foreground hover:text-amber-500 transition-colors font-medium"
-            >
-              Products
-            </Link>
+
             {user && user.role === 'admin' && (
               <>
                 <Link
@@ -64,11 +59,8 @@ const Header: React.FC = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            
-            <Button variant="ghost" size="icon">
-              <Search className="h-5 w-5" />
-            </Button>
+            {/* <ThemeToggle /> */}
+
 
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon">
@@ -158,7 +150,7 @@ const Header: React.FC = () => {
                   </Link>
                 </>
               )}
-              
+
               {!user && (
                 <div className="pt-4 border-t border-border">
                   <Link to="/login" onClick={() => setIsMenuOpen(false)}>

@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { useOrderStore } from '../../stores/useOrderStore';
-import { useProductStore } from '../../stores/useProductStore';
+import { useProductsStore } from '../../stores/useProductsStore';
 import { DollarSign, ShoppingBag, Package } from 'lucide-react';
 
 const AdminOverview: React.FC = () => {
   const { orders } = useOrderStore();
-  const { products } = useProductStore();
+  const { products } = useProductsStore();
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const totalOrders = orders.length;
@@ -24,7 +24,7 @@ const AdminOverview: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
           <div className="flex items-center space-x-3">
             <ShoppingBag className="w-8 h-8 text-blue-400" />
@@ -34,7 +34,7 @@ const AdminOverview: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
           <div className="flex items-center space-x-3">
             <Package className="w-8 h-8 text-purple-400" />

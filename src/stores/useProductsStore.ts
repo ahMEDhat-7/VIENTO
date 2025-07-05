@@ -15,6 +15,7 @@ interface ProductsState {
   deleteProduct: (id: string) => Promise<boolean>;
   fetchProducts: () => Promise<void>;
   getProductById: (id: string) => Product | undefined;
+  incrementViews: (id: string) => void;
 }
 
 export const useProductsStore = create<ProductsState>()(
@@ -30,6 +31,7 @@ export const useProductsStore = create<ProductsState>()(
         try {
           set({ loading: true, error: null });
           const products = await apiClient.get(ENDPOINTS.PRODUCTS);
+          console.log(products);
           set({ products, loading: false });
         } catch (error) {
           set({ error: 'Failed to fetch products', loading: false });
@@ -83,6 +85,15 @@ export const useProductsStore = create<ProductsState>()(
       },
       getProductById: (id) => {
         return get().products.find((p) => p.id === id);
+      },
+      incrementViews: (id) => {
+        set((state) => ({
+          products: state.products.map((p) =>
+            p.id === id
+              ? { ...p, analytics: { ...p.analytics, views: (p.analytics?.views || 0) + 1 } }
+              : p
+          ),
+        }));
       },
     }),
     {

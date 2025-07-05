@@ -1,26 +1,86 @@
 
 import React, { useEffect, useState } from 'react';
-import { useProductStore } from '../stores/useProductStore';
+import { useProductsStore } from '../stores/useProductsStore';
 import ProductCard from '../components/ProductCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
 
 const Products: React.FC = () => {
-  const { 
-    filteredProducts: products, 
-    categories,
-    filters, 
-    sortBy,
-    setFilters, 
-    setSortBy, 
-    applyFilters, 
-    searchProducts 
-  } = useProductStore();
+  const { products: allProducts } = useProductsStore();
 
+  // تعريف الفلاتر
+  const [filters, setFilters] = useState({
+    categoryId: '',
+    brand: '',
+    minPrice: 0,
+    maxPrice: 1000,
+    search: '',
+    inStock: false,
+    tags: [] as string[],
+  });
+  const [sortBy, setSortBy] = useState('newest');
+  const [categories] = useState([
+    { id: '1', name: 'T-Shirts' },
+    { id: '2', name: 'Hats' },
+    { id: '3', name: 'Accessories' },
+  ]);
+  const [products, setProducts] = useState(allProducts);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  // دالة تطبيق الفلاتر
+  const applyFilters = React.useCallback(() => {
+    let filtered = allProducts;
+    if (filters.categoryId) {
+      filtered = filtered.filter(p => p.categoryId === filters.categoryId);
+    }
+    if (filters.brand) {
+      filtered = filtered.filter(p => p.brand === filters.brand);
+    }
+    // تعديل هنا: إذا كان المنتج يحتوي على stock بدلاً من inStock
+    if (filters.inStock) {
+      filtered = filtered.filter(p => p.stock > 0);
+    }
+    if (filters.tags.length > 0) {
+      filtered = filtered.filter(p =>
+        filters.tags.every(tag => p.tags?.includes(tag))
+      );
+    }
+    if (filters.minPrice) {
+      filtered = filtered.filter(p => p.price >= filters.minPrice);
+    }
+    if (filters.maxPrice) {
+      filtered = filtered.filter(p => p.price <= filters.maxPrice);
+    }
+    if (filters.search) {
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(filters.search.toLowerCase())
+      );
+    }
+    // ترتيب النتائج
+    switch (sortBy) {
+      case 'price-low':
+        filtered = [...filtered].sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered = [...filtered].sort((a, b) => b.price - a.price);
+        break;
+      case 'name':
+        filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      // يمكن إضافة المزيد حسب الحاجة
+      default:
+        break;
+    }
+    setProducts(filtered);
+  }, [allProducts, filters, sortBy]);
+
+  // دالة البحث
+  const searchProducts = (query: string) => {
+    setFilters(prev => ({ ...prev, search: query }));
+  };
 
   useEffect(() => {
     applyFilters();
@@ -45,9 +105,10 @@ const Products: React.FC = () => {
   };
 
   const removeTag = (tagToRemove: string) => {
-    setFilters({
-      tags: filters.tags.filter(tag => tag !== tagToRemove)
-    });
+    setFilters(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
   };
 
   const popularTags = ['classic', 'premium', 'cotton', 'adjustable', 'snapback'];
@@ -82,13 +143,13 @@ const Products: React.FC = () => {
           {filters.categoryId && (
             <Badge variant="secondary" className="flex items-center gap-1">
               Category: {categories.find(c => c.id === filters.categoryId)?.name}
-              <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters({ categoryId: '' })} />
+              <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters(prev => ({ ...prev, categoryId: '' }))} />
             </Badge>
           )}
           {filters.brand && (
             <Badge variant="secondary" className="flex items-center gap-1">
               Brand: {filters.brand}
-              <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters({ brand: '' })} />
+              <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters(prev => ({ ...prev, brand: '' }))} />
             </Badge>
           )}
           {filters.tags.map(tag => (
@@ -100,7 +161,7 @@ const Products: React.FC = () => {
           {filters.inStock && (
             <Badge variant="secondary" className="flex items-center gap-1">
               In Stock Only
-              <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters({ inStock: false })} />
+              <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters(prev => ({ ...prev, inStock: false }))} />
             </Badge>
           )}
         </div>
@@ -116,7 +177,7 @@ const Products: React.FC = () => {
               <SlidersHorizontal className="w-4 h-4 mr-2" />
               Filters
             </Button>
-            
+
             {(filters.categoryId || filters.search || filters.inStock || filters.tags.length > 0) && (
               <Button
                 onClick={clearFilters}
@@ -153,7 +214,7 @@ const Products: React.FC = () => {
                 <label className="block text-foreground font-medium mb-2">Category</label>
                 <select
                   value={filters.categoryId}
-                  onChange={(e) => setFilters({ categoryId: e.target.value })}
+                  onChange={(e) => setFilters(prev => ({ ...prev, categoryId: e.target.value }))}
                   className="w-full bg-background border border-border rounded-md px-3 py-2"
                 >
                   <option value="">All Categories</option>
@@ -170,14 +231,14 @@ const Products: React.FC = () => {
                     type="number"
                     placeholder="Min"
                     value={filters.minPrice}
-                    onChange={(e) => setFilters({ minPrice: parseInt(e.target.value) || 0 })}
+                    onChange={(e) => setFilters(prev => ({ ...prev, minPrice: parseInt(e.target.value) || 0 }))}
                     className="bg-background border-border"
                   />
                   <Input
                     type="number"
                     placeholder="Max"
                     value={filters.maxPrice}
-                    onChange={(e) => setFilters({ maxPrice: parseInt(e.target.value) || 1000 })}
+                    onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: parseInt(e.target.value) || 1000 }))}
                     className="bg-background border-border"
                   />
                 </div>
@@ -188,7 +249,7 @@ const Products: React.FC = () => {
                   <input
                     type="checkbox"
                     checked={filters.inStock}
-                    onChange={(e) => setFilters({ inStock: e.target.checked })}
+                    onChange={(e) => setFilters(prev => ({ ...prev, inStock: e.target.checked }))}
                     className="rounded border-border bg-background"
                   />
                   <span className="text-foreground">In Stock Only</span>
@@ -209,7 +270,7 @@ const Products: React.FC = () => {
                       const newTags = filters.tags.includes(tag)
                         ? filters.tags.filter(t => t !== tag)
                         : [...filters.tags, tag];
-                      setFilters({ tags: newTags });
+                      setFilters(prev => ({ ...prev, tags: newTags }));
                     }}
                   >
                     {tag}
@@ -227,7 +288,7 @@ const Products: React.FC = () => {
             {filters.search && ` for "${filters.search}"`}
           </p>
         </div>
-        
+
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (

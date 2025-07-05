@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useProductStore } from '../stores/useProductStore';
+import { useProductsStore } from '../stores/useProductsStore';
 import { useCartStore } from '../stores/useCartStore';
 import { useToast } from '@/hooks/use-toast';
 import { Star, Plus, Minus, ArrowLeft, Truck, Shield, RotateCcw } from 'lucide-react';
@@ -10,7 +10,8 @@ const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getProductById } = useProductStore();
+  const { products } = useProductsStore();
+  const getProductById = (id: string) => products.find(p => p.id === id);
   const { addToCart } = useCartStore();
 
   const [selectedSize, setSelectedSize] = useState('');
@@ -33,12 +34,16 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const availableSizes = [...new Set(product.variants.map(v => v.size))];
-  const availableColors = [...new Set(product.variants.map(v => v.color))];
+  const availableSizes: string[] = product.variants
+    .map(v => v.size)
+    .filter((s): s is string => typeof s === 'string');
+  const availableColors: string[] = product.variants
+    .map(v => v.color)
+    .filter((c): c is string => typeof c === 'string');
 
   React.useEffect(() => {
-    if (availableSizes.length > 0) setSelectedSize(availableSizes[0]);
-    if (availableColors.length > 0) setSelectedColor(availableColors[0]);
+    if (availableSizes.length > 0) setSelectedSize(String(availableSizes[0]));
+    if (availableColors.length > 0) setSelectedColor(String(availableColors[0]));
   }, [product]);
 
   const handleAddToCart = () => {
@@ -140,14 +145,14 @@ const ProductDetail: React.FC = () => {
               <div className="flex space-x-2">
                 {availableSizes.map((size) => (
                   <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
+                    key={String(size)}
+                    onClick={() => setSelectedSize(String(size))}
                     className={`px-4 py-2 rounded-lg border ${selectedSize === size
                       ? 'border-amber-500 bg-amber-500/20 text-amber-400'
                       : 'border-border text-muted-foreground hover:border-muted-foreground'
                       }`}
                   >
-                    {size}
+                    {String(size)}
                   </button>
                 ))}
               </div>
@@ -159,14 +164,14 @@ const ProductDetail: React.FC = () => {
               <div className="flex space-x-2">
                 {availableColors.map((color) => (
                   <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
+                    key={String(color)}
+                    onClick={() => setSelectedColor(String(color))}
                     className={`px-4 py-2 rounded-lg border ${selectedColor === color
                       ? 'border-amber-500 bg-amber-500/20 text-amber-400'
                       : 'border-border text-muted-foreground hover:border-muted-foreground'
                       }`}
                   >
-                    {color}
+                    {String(color)}
                   </button>
                 ))}
               </div>

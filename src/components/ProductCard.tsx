@@ -5,7 +5,7 @@ import { Product } from '../types/store';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCartStore } from '../stores/useCartStore';
-import { useProductStore } from '../stores/useProductStore';
+import { useProductsStore } from '../stores/useProductsStore';
 import { ShoppingCart, Star, Eye, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -17,7 +17,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { toast } = useToast();
   const { addToCart } = useCartStore();
-  const { incrementViews } = useProductStore();
+  const { incrementViews } = useProductsStore();
   const { isLoggedIn } = useAuthStore();
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -127,11 +127,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-3 h-3 ${
-                    i < Math.floor(product.analytics.ratingsCount)
-                      ? "text-amber-400 fill-current"
-                      : "text-muted-foreground"
-                  }`}
+                  className={`w-3 h-3 ${i < Math.floor(product.analytics.ratingsCount)
+                    ? "text-amber-400 fill-current"
+                    : "text-muted-foreground"
+                    }`}
                 />
               ))}
             </div>
@@ -153,13 +152,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               )}
             </div>
             <span
-              className={`text-xs px-2 py-1 rounded-full ${
-                totalStock > 10
-                  ? "bg-green-500/20 text-green-400"
-                  : totalStock > 0
+              className={`text-xs px-2 py-1 rounded-full ${totalStock > 10
+                ? "bg-green-500/20 text-green-400"
+                : totalStock > 0
                   ? "bg-yellow-500/20 text-yellow-400"
                   : "bg-red-500/20 text-red-400"
-              }`}
+                }`}
             >
               {totalStock > 0 ? `${totalStock} left` : "Out of stock"}
             </span>
@@ -179,14 +177,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                       color.toLowerCase() === "white"
                         ? "#ffffff"
                         : color.toLowerCase() === "black"
-                        ? "#000000"
-                        : color.toLowerCase() === "navy"
-                        ? "#001f3f"
-                        : color.toLowerCase() === "gray"
-                        ? "#808080"
-                        : color.toLowerCase() === "red"
-                        ? "#ff0000"
-                        : color.toLowerCase(),
+                          ? "#000000"
+                          : color.toLowerCase() === "navy"
+                            ? "#001f3f"
+                            : color.toLowerCase() === "gray"
+                              ? "#808080"
+                              : color.toLowerCase() === "red"
+                                ? "#ff0000"
+                                : color.toLowerCase(),
                   }}
                   title={color}
                 />
