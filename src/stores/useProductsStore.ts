@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product, Category } from '../types/store';
-import { apiClient, ENDPOINTS } from "../config/api";
+import * as productService from '../services/productService';
+import { useAuthStore } from './useAuthStore';
 
 interface ProductsState {
   products: Product[];
@@ -30,8 +31,7 @@ export const useProductsStore = create<ProductsState>()(
       fetchProducts: async () => {
         try {
           set({ loading: true, error: null });
-          const products = await apiClient.get(ENDPOINTS.PRODUCTS);
-          console.log(products);
+          const products = await productService.getProducts();
           set({ products, loading: false });
         } catch (error) {
           set({ error: 'Failed to fetch products', loading: false });
@@ -41,7 +41,9 @@ export const useProductsStore = create<ProductsState>()(
       addProduct: async (productData) => {
         try {
           set({ loading: true, error: null });
-          const response = await apiClient.post(ENDPOINTS.PRODUCTS, productData);
+          // جلب التوكن من useAuthStore مباشرة
+          const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
+          const response = await productService.createProduct(productData, token);
           if (response) {
             await get().fetchProducts(); // Refresh products list
             set({ loading: false });
@@ -57,7 +59,8 @@ export const useProductsStore = create<ProductsState>()(
       updateProduct: async (id, updates) => {
         try {
           set({ loading: true, error: null });
-          const response = await apiClient.patch(`${ENDPOINTS.PRODUCTS}/${id}`, updates);
+          const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
+          const response = await productService.updateProduct(id, updates, token);
           if (response) {
             await get().fetchProducts(); // Refresh products list
             set({ loading: false });
@@ -73,7 +76,8 @@ export const useProductsStore = create<ProductsState>()(
       deleteProduct: async (id) => {
         try {
           set({ loading: true, error: null });
-          await apiClient.delete(`${ENDPOINTS.PRODUCTS}/${id}`);
+          const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
+          await productService.deleteProduct(id, token);
           await get().fetchProducts(); // Refresh products list
           set({ loading: false });
           return true;
