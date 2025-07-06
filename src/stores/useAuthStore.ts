@@ -1,9 +1,8 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { apiClient, ENDPOINTS } from '../config/api';
-
 import { User } from '../types/store';
+import * as authService from '../services/authService';
 
 interface AuthState {
   user: User | null;
@@ -23,11 +22,7 @@ export const useAuthStore = create<AuthState>()(
       isLoggedIn: false,
       login: async (email: string, password: string) => {
         try {
-          const response = await apiClient.post(ENDPOINTS.AUTH.LOGIN, {
-            email,
-            password,
-          });
-
+          const response = await authService.login(email, password);
           if (response.user) {
             set({ user: { ...response.user, token: response.token }, isLoggedIn: true });
             return true;
@@ -43,12 +38,7 @@ export const useAuthStore = create<AuthState>()(
       },
       register: async (userData) => {
         try {
-          const response = await apiClient.post(ENDPOINTS.AUTH.REGISTER, {
-            username: userData.name,
-            email: userData.email,
-            password: userData.password,
-          });
-
+          const response = await authService.register(userData.name, userData.email, userData.password);
           if (response.user) {
             set({ user: { ...response.user, token: response.token }, isLoggedIn: true });
             return true;
