@@ -1,51 +1,57 @@
-import axios from 'axios';
+import { apiClient, ENDPOINTS } from '../config/api';
+import { User } from '../types/store';
 
-const API_BASE_URL = 'http://localhost:7000/api';
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
-export const login = async (email: string, password: string) => {
-  const response = await axios.post(`${API_BASE_URL}/auth/login`, { email, password }, {
-    withCredentials: true,
-    headers: { 'Content-Type': 'application/json' },
-  });
-  return response.data;
+export interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  token: string;
+}
+
+export const authService = {
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const response = await apiClient.post(ENDPOINTS.AUTH.LOGIN, credentials);
+    return response;
+  },
+
+  async register(userData: RegisterData): Promise<AuthResponse> {
+    const response = await apiClient.post(ENDPOINTS.AUTH.REGISTER, {
+      username: userData.name,
+      email: userData.email,
+      password: userData.password,
+    });
+    return response;
+  },
+
+  async registerAdmin(userData: RegisterData): Promise<AuthResponse> {
+    const response = await apiClient.post(ENDPOINTS.AUTH.REGISTER_ADMIN, {
+      username: userData.name,
+      email: userData.email,
+      password: userData.password,
+    });
+    return response;
+  },
+
+  async getProfile(): Promise<User> {
+    const response = await apiClient.get(ENDPOINTS.AUTH.PROFILE);
+    return response;
+  },
+
+  async refreshToken(): Promise<AuthResponse> {
+    const response = await apiClient.post(ENDPOINTS.AUTH.REFRESH, {});
+    return response;
+  },
+
+  async logout(): Promise<void> {
+    await apiClient.post(ENDPOINTS.AUTH.LOGOUT, {});
+  }
 };
-
-export const register = async (name: string, email: string, password: string) => {
-  const response = await axios.post(`${API_BASE_URL}/auth/register`, { username: name, email, password }, {
-    withCredentials: true,
-    headers: { 'Content-Type': 'application/json' },
-  });
-  return response.data;
-};
-
-export const registerAdmin = async (name: string, email: string, password: string) => {
-  const response = await axios.post(`${API_BASE_URL}/auth/register-admin`, { username: name, email, password }, {
-    withCredentials: true,
-    headers: { 'Content-Type': 'application/json' },
-  });
-  return response.data;
-};
-
-export const getProfile = async (token: string) => {
-  const response = await axios.get(`${API_BASE_URL}/auth/profile`, {
-    headers: { Authorization: `Bearer ${token}` },
-    withCredentials: true,
-  });
-  return response.data;
-};
-
-export const refresh = async (token: string) => {
-  const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {}, {
-    headers: { Authorization: `Bearer ${token}` },
-    withCredentials: true,
-  });
-  return response.data;
-};
-
-export const logout = async (token: string) => {
-  const response = await axios.post(`${API_BASE_URL}/auth/logout`, {}, {
-    headers: { Authorization: `Bearer ${token}` },
-    withCredentials: true,
-  });
-  return response.data;
-}; 

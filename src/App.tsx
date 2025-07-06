@@ -4,20 +4,20 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from './contexts/ThemeContext';
-import Header from './components/Header';
-import Index from './pages/Index';
-import Products from './pages/Products';
+import Header from './components/layout/Header';
+import Index from './pages/home/Index';
+import Products from './pages/products/Products';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+import Login from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
 import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import AdminPanel from './pages/AdminPanel';
-import CartSidebar from './components/CartSidebar';
-import ProtectedRoute from './components/ProtectedRoute';
+import CartSidebar from './components/shared/CartSidebar';
+import ProtectedRoute from './components/shared/ProtectedRoute';
 
 
 const queryClient = new QueryClient();
