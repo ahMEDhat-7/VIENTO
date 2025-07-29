@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product, Category } from '../types/store';
-import * as productService from '../services/productService';
+import { productService } from '../services/productService';
 import { useAuthStore } from './useAuthStore';
 
 interface ProductsState {
@@ -31,7 +31,7 @@ export const useProductsStore = create<ProductsState>()(
       fetchProducts: async () => {
         try {
           set({ loading: true, error: null });
-          const products = await productService.getProducts();
+          const products = (await productService.getProducts()) || [];
           set({ products, loading: false });
         } catch (error) {
           set({ error: 'Failed to fetch products', loading: false });
@@ -43,7 +43,7 @@ export const useProductsStore = create<ProductsState>()(
           set({ loading: true, error: null });
           // جلب التوكن من useAuthStore مباشرة
           const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
-          const response = await productService.createProduct(productData, token);
+          const response = await productService.createProduct(productData);
           if (response) {
             await get().fetchProducts(); // Refresh products list
             set({ loading: false });
@@ -60,7 +60,7 @@ export const useProductsStore = create<ProductsState>()(
         try {
           set({ loading: true, error: null });
           const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
-          const response = await productService.updateProduct(id, updates, token);
+          const response = await productService.updateProduct(id, updates);
           if (response) {
             await get().fetchProducts(); // Refresh products list
             set({ loading: false });
@@ -77,7 +77,7 @@ export const useProductsStore = create<ProductsState>()(
         try {
           set({ loading: true, error: null });
           const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
-          await productService.deleteProduct(id, token);
+          await productService.deleteProduct(id);
           await get().fetchProducts(); // Refresh products list
           set({ loading: false });
           return true;
