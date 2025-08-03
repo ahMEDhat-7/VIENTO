@@ -28,22 +28,22 @@ export interface CreateProductData {
 export const productService = {
   async getProducts(): Promise<Product[]> {
     const response = await apiClient.get(ENDPOINTS.PRODUCTS);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getProductById(id: string): Promise<Product> {
     const response = await apiClient.get(`${ENDPOINTS.PRODUCTS}/${id}`);
-    return response;
+    return response as Product;
   },
 
   async createProduct(productData: CreateProductData): Promise<Product> {
     const response = await apiClient.post(ENDPOINTS.PRODUCTS, productData);
-    return response;
+    return response as Product;
   },
 
   async updateProduct(id: string, updates: Partial<Product>): Promise<Product> {
     const response = await apiClient.patch(`${ENDPOINTS.PRODUCTS}/${id}`, updates);
-    return response;
+    return response as Product;
   },
 
   async deleteProduct(id: string): Promise<void> {
@@ -52,11 +52,11 @@ export const productService = {
 
   async getProductsByCategory(categoryId: string): Promise<Product[]> {
     const response = await apiClient.get(`${ENDPOINTS.PRODUCTS}?categoryId=${categoryId}`);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async searchProducts(query: string): Promise<Product[]> {
     const response = await apiClient.get(`${ENDPOINTS.PRODUCTS}?search=${query}`);
-    return response;
+    return Array.isArray(response) ? response : [];
   }
 };

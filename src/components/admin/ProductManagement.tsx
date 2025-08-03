@@ -18,7 +18,7 @@ const ProductManagement: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const products = await apiClient.get(ENDPOINTS.PRODUCTS);
-        setProducts(products);
+        setProducts(Array.isArray(products) ? products : []);
       } catch (error) {
         console.error('Failed to fetch products:', error);
       }
@@ -42,7 +42,7 @@ const ProductManagement: React.FC = () => {
       try {
         await apiClient.delete(`${ENDPOINTS.PRODUCTS}/${productId}`);
         const products = await apiClient.get(ENDPOINTS.PRODUCTS);
-        setProducts(products);
+        setProducts(Array.isArray(products) ? products : []);
       } catch (error) {
         console.error('Failed to delete product:', error);
       }
@@ -57,7 +57,7 @@ const ProductManagement: React.FC = () => {
     try {
       await apiClient.patch(`${ENDPOINTS.PRODUCTS}/${updatedProduct.id}`, updatedProduct);
       const products = await apiClient.get(ENDPOINTS.PRODUCTS);
-      setProducts(products);
+      setProducts(Array.isArray(products) ? products : []);
       setEditingProduct(null);
     } catch (error) {
       console.error('Failed to update product:', error);

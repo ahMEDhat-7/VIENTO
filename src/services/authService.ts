@@ -20,7 +20,7 @@ export interface AuthResponse {
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await apiClient.post(ENDPOINTS.AUTH.LOGIN, credentials);
-    return response;
+    return response as AuthResponse;
   },
 
   async register(userData: RegisterData): Promise<AuthResponse> {
@@ -29,7 +29,7 @@ export const authService = {
       email: userData.email,
       password: userData.password,
     });
-    return response;
+    return response as AuthResponse;
   },
 
   async registerAdmin(userData: RegisterData): Promise<AuthResponse> {
@@ -38,17 +38,17 @@ export const authService = {
       email: userData.email,
       password: userData.password,
     });
-    return response;
+    return response as AuthResponse;
   },
 
   async getProfile(): Promise<User> {
     const response = await apiClient.get(ENDPOINTS.AUTH.PROFILE);
-    return response;
+    return response as User;
   },
 
   async refreshToken(): Promise<AuthResponse> {
     const response = await apiClient.post(ENDPOINTS.AUTH.REFRESH, {});
-    return response;
+    return response as AuthResponse;
   },
 
   async logout(): Promise<void> {

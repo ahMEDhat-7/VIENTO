@@ -22,42 +22,42 @@ export const reviewService = {
       ...reviewData,
       status: 'pending'
     });
-    return response;
+    return response as Review;
   },
 
   async getReviews(): Promise<Review[]> {
     const response = await apiClient.get(ENDPOINTS.REVIEWS);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getProductReviews(productId: string): Promise<Review[]> {
     const response = await apiClient.get(`${ENDPOINTS.REVIEWS}/product/${productId}`);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getUserReviews(userId: string): Promise<Review[]> {
     const response = await apiClient.get(`${ENDPOINTS.REVIEWS}/user/${userId}`);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getPendingReviews(): Promise<Review[]> {
     const response = await apiClient.get(`${ENDPOINTS.REVIEWS}/pending`);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getProductReviewStats(productId: string): Promise<ReviewStats> {
     const response = await apiClient.get(`${ENDPOINTS.REVIEWS}/product/${productId}/stats`);
-    return response;
+    return response as ReviewStats;
   },
 
   async getReviewStats(): Promise<ReviewStats> {
     const response = await apiClient.get(`${ENDPOINTS.REVIEWS}/stats`);
-    return response;
+    return response as ReviewStats;
   },
 
   async getReviewById(id: string): Promise<Review> {
     const response = await apiClient.get(`${ENDPOINTS.REVIEWS}/${id}`);
-    return response;
+    return response as Review;
   },
 
   async updateReviewStatus(id: string, status: Review['status']): Promise<void> {
@@ -66,7 +66,7 @@ export const reviewService = {
 
   async updateReview(id: string, updates: Partial<Review>): Promise<Review> {
     const response = await apiClient.patch(`${ENDPOINTS.REVIEWS}/${id}`, updates);
-    return response;
+    return response as Review;
   },
 
   async deleteReview(id: string): Promise<void> {

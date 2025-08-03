@@ -18,32 +18,32 @@ export const notificationService = {
       ...notificationData,
       read: false
     });
-    return response;
+    return response as Notification;
   },
 
   async getNotifications(): Promise<Notification[]> {
     const response = await apiClient.get(ENDPOINTS.NOTIFICATIONS);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getUserNotifications(userId: string): Promise<Notification[]> {
     const response = await apiClient.get(`${ENDPOINTS.NOTIFICATIONS}/user/${userId}`);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getUnreadNotifications(userId: string): Promise<Notification[]> {
     const response = await apiClient.get(`${ENDPOINTS.NOTIFICATIONS}/user/${userId}/unread`);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getNotificationStats(userId: string): Promise<NotificationStats> {
     const response = await apiClient.get(`${ENDPOINTS.NOTIFICATIONS}/user/${userId}/stats`);
-    return response;
+    return response as NotificationStats;
   },
 
   async getNotificationById(id: string): Promise<Notification> {
     const response = await apiClient.get(`${ENDPOINTS.NOTIFICATIONS}/${id}`);
-    return response;
+    return response as Notification;
   },
 
   async markAsRead(id: string): Promise<void> {
@@ -56,7 +56,7 @@ export const notificationService = {
 
   async updateNotification(id: string, updates: Partial<Notification>): Promise<Notification> {
     const response = await apiClient.patch(`${ENDPOINTS.NOTIFICATIONS}/${id}`, updates);
-    return response;
+    return response as Notification;
   },
 
   async deleteNotification(id: string): Promise<void> {

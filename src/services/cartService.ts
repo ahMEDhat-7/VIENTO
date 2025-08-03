@@ -9,12 +9,12 @@ export interface CartData {
 export const cartService = {
   async getCart(): Promise<CartItem[]> {
     const response = await apiClient.get(ENDPOINTS.CART);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getUserCart(userId: string): Promise<CartItem[]> {
     const response = await apiClient.get(`${ENDPOINTS.CART}/user/${userId}`);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async addToCart(productId: string, quantity: number): Promise<void> {

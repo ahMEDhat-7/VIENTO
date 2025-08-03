@@ -61,7 +61,26 @@ class ApiClient {
     // Mock data for development
     if (endpoint.includes('/products')) {
       if (method === 'GET') {
-        return [] as unknown as T;
+        return [{
+          id: '1',
+          name: 'VIENTO Jacket',
+          description: 'Premium windproof jacket for all weather conditions',
+          price: 149.99,
+          brand: 'VIENTO',
+          categoryId: '1',
+          images: ['/placeholder.svg'],
+          imageUrl: '/placeholder.svg',
+          stock: 25,
+          variants: [
+            { color: 'Black', size: 'M', stock: 10 },
+            { color: 'Navy', size: 'L', stock: 15 }
+          ],
+          isAvailable: true,
+          tags: ['windproof', 'premium', 'outdoor'],
+          analytics: { views: 45, purchases: 12, averageRating: 4.5, ratingsCount: 8 },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }] as unknown as T;
       }
       return { 
         id: '1', 
@@ -70,7 +89,8 @@ class ApiClient {
         price: 99,
         brand: 'Mock Brand',
         categoryId: '1',
-        images: [],
+        images: ['/placeholder.svg'],
+        imageUrl: '/placeholder.svg',
         stock: 10,
         variants: [],
         isAvailable: true,
@@ -82,8 +102,23 @@ class ApiClient {
     }
     
     if (endpoint.includes('/auth')) {
+      if (endpoint.includes('/profile')) {
+        return { 
+          id: '1', 
+          name: 'Mock User', 
+          email: 'user@example.com', 
+          role: 'user',
+          createdAt: new Date().toISOString()
+        } as unknown as T;
+      }
       return {
-        user: { id: '1', name: 'Mock User', email: 'user@example.com', role: 'user' },
+        user: { 
+          id: '1', 
+          name: 'Mock User', 
+          email: 'user@example.com', 
+          role: 'user',
+          createdAt: new Date().toISOString()
+        },
         token: 'mock-token'
       } as unknown as T;
     }
@@ -96,10 +131,40 @@ class ApiClient {
       if (method === 'POST') {
         return { id: '1' } as unknown as T;
       }
-      return [] as unknown as T;
+      if (endpoint.includes('/stats')) {
+        return {
+          totalOrders: 10,
+          totalRevenue: 1500,
+          pendingOrders: 2,
+          completedOrders: 8
+        } as unknown as T;
+      }
+      return [{
+        id: '1',
+        userId: '1',
+        items: [],
+        total: 149.99,
+        paymentMethod: 'card',
+        paymentStatus: 'paid',
+        status: 'pending',
+        shippingAddress: {
+          id: '1',
+          street: '123 Main St',
+          city: 'San Francisco',
+          country: 'USA'
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }] as unknown as T;
     }
     
     if (endpoint.includes('/notifications')) {
+      if (endpoint.includes('/stats')) {
+        return {
+          totalNotifications: 5,
+          unreadCount: 2
+        } as unknown as T;
+      }
       if (method === 'GET') {
         return [] as unknown as T;
       }
@@ -114,6 +179,14 @@ class ApiClient {
     }
     
     if (endpoint.includes('/reviews')) {
+      if (endpoint.includes('/stats')) {
+        return {
+          totalReviews: 5,
+          averageRating: 4.2,
+          pendingReviews: 1,
+          approvedReviews: 4
+        } as unknown as T;
+      }
       if (method === 'GET') {
         return [] as unknown as T;
       }
@@ -130,17 +203,25 @@ class ApiClient {
     
     if (endpoint.includes('/users')) {
       if (method === 'GET') {
-        return [] as unknown as T;
+        return [{
+          id: '1',
+          name: 'Mock User',
+          email: 'user@example.com',
+          role: 'user',
+          createdAt: new Date().toISOString()
+        }] as unknown as T;
       }
       return {
         id: '1',
         name: 'Mock User',
         email: 'user@example.com',
-        role: 'user'
+        role: 'user',
+        createdAt: new Date().toISOString()
       } as unknown as T;
     }
     
-    return {} as unknown as T;
+    // Default fallback for unhandled endpoints
+    return [] as unknown as T;
   }
 
   async get<T>(endpoint: string): Promise<T> {

@@ -134,8 +134,10 @@ export const useCartStore = create<CartState>()(
         try {
           set({ loading: true });
           const response = await apiClient.get(ENDPOINTS.CART);
-          if (response?.items) {
-            set({ items: response.items });
+          if (Array.isArray(response)) {
+            set({ items: response });
+          } else if (response && (response as any).items && Array.isArray((response as any).items)) {
+            set({ items: (response as any).items });
           }
           set({ loading: false });
         } catch (error) {

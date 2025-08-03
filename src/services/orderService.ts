@@ -25,22 +25,22 @@ export interface OrderStats {
 export const orderService = {
   async createOrder(orderData: CreateOrderData): Promise<{ id: string }> {
     const response = await apiClient.post(ENDPOINTS.ORDERS, orderData);
-    return response;
+    return { id: (response as any)?.id || 'order-' + Date.now() };
   },
 
   async getOrders(): Promise<Order[]> {
     const response = await apiClient.get(ENDPOINTS.ORDERS);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getUserOrders(userId: string): Promise<Order[]> {
     const response = await apiClient.get(`${ENDPOINTS.ORDERS}/user/${userId}`);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getOrderById(id: string): Promise<Order> {
     const response = await apiClient.get(`${ENDPOINTS.ORDERS}/${id}`);
-    return response;
+    return response as Order;
   },
 
   async updateOrderStatus(id: string, status: Order['status']): Promise<void> {
@@ -49,7 +49,7 @@ export const orderService = {
 
   async updateOrder(id: string, updates: Partial<Order>): Promise<Order> {
     const response = await apiClient.patch(`${ENDPOINTS.ORDERS}/${id}`, updates);
-    return response;
+    return response as Order;
   },
 
   async deleteOrder(id: string): Promise<void> {
@@ -58,6 +58,6 @@ export const orderService = {
 
   async getOrderStats(): Promise<OrderStats> {
     const response = await apiClient.get(`${ENDPOINTS.ORDERS}/stats`);
-    return response;
+    return response as OrderStats;
   }
 };

@@ -10,22 +10,22 @@ export interface CreateUserData {
 export const userService = {
   async getUsers(): Promise<User[]> {
     const response = await apiClient.get(ENDPOINTS.USERS);
-    return response;
+    return Array.isArray(response) ? response : [];
   },
 
   async getUserById(id: string): Promise<User> {
     const response = await apiClient.get(`${ENDPOINTS.USERS}/${id}`);
-    return response;
+    return response as User;
   },
 
   async createUser(userData: CreateUserData): Promise<User> {
     const response = await apiClient.post(ENDPOINTS.USERS, userData);
-    return response;
+    return response as User;
   },
 
   async updateUser(id: string, updates: Partial<User>): Promise<User> {
     const response = await apiClient.patch(`${ENDPOINTS.USERS}/${id}`, updates);
-    return response;
+    return response as User;
   },
 
   async deleteUser(id: string): Promise<void> {

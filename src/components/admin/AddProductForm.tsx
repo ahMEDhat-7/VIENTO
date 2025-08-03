@@ -109,7 +109,7 @@ const AddProductForm: React.FC = () => {
       ENDPOINTS.PRODUCTS,
       newProduct
     );
-    setProducts([...products, createdProduct]);
+    setProducts([...products, createdProduct as Product]);
 
     setFormData({
       name: "",
