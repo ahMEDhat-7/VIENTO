@@ -1,30 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { CartItem } from '../types/store';
-import { apiClient, ENDPOINTS } from "@/config/api";
-
-export interface Order {
-  id: string;
-  items: CartItem[];
-  subtotal: number;
-  tax: number;
-  total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  createdAt: string;
-  customerInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-  };
-  paymentMethod: string;
-}
+import { CartItem, Order } from '../types/store';
+import { orderService, CreateOrderData } from '../services/orderService';
 
 interface OrderState {
   orders: Order[];
   loading: boolean;
   error: string | null;
-  createOrder: (orderData: Omit<Order, 'id' | 'createdAt' | 'status'>) => Promise<string | null>;
+  createOrder: (orderData: CreateOrderData) => Promise<string | null>;
   fetchOrders: () => Promise<void>;
   fetchUserOrders: (userId: string) => Promise<void>;
   getOrderById: (id: string) => Order | undefined;
@@ -41,19 +24,12 @@ export const useOrderStore = create<OrderState>()(
       createOrder: async (orderData) => {
         try {
           set({ loading: true, error: null });
-          const response = await apiClient.post(ENDPOINTS.ORDERS, orderData);
-          const responseId = (response as any)?.id || 'order-' + Date.now();
-          const newOrder: Order = {
-            ...orderData,
-            id: responseId,
-            createdAt: new Date().toISOString(),
-            status: 'pending',
-          };
-          set(state => ({
-            orders: [...state.orders, newOrder],
-            loading: false
-          }));
-          return responseId;
+          const result = await orderService.createOrder(orderData);
+          
+          // Note: We'll refetch orders instead of manually adding to maintain consistency
+          await get().fetchOrders();
+          
+          return result.id;
         } catch (error) {
           set({ error: 'Failed to create order', loading: false });
           console.error('Failed to create order:', error);
@@ -63,33 +39,45 @@ export const useOrderStore = create<OrderState>()(
       fetchOrders: async () => {
         try {
           set({ loading: true, error: null });
-          const orders = await apiClient.get(ENDPOINTS.ORDERS);
-          set({ orders: Array.isArray(orders) ? orders : [], loading: false });
+          const fetchedOrders = await orderService.getOrders();
+          set({ 
+            orders: Array.isArray(fetchedOrders) ? fetchedOrders : [],
+            loading: false 
+          });
         } catch (error) {
-          set({ error: 'Failed to fetch orders', loading: false });
-          console.error('Failed to fetch orders:', error);
+          set({ 
+            error: 'Failed to fetch orders',
+            loading: false 
+          });
         }
       },
       fetchUserOrders: async (userId) => {
         try {
           set({ loading: true, error: null });
-          const orders = await apiClient.get(`${ENDPOINTS.ORDERS}/user/${userId}`);
-          set({ orders: Array.isArray(orders) ? orders : [], loading: false });
+          const userOrders = await orderService.getUserOrders(userId);
+          set({ 
+            orders: Array.isArray(userOrders) ? userOrders : [],
+            loading: false 
+          });
         } catch (error) {
-          set({ error: 'Failed to fetch user orders', loading: false });
-          console.error('Failed to fetch user orders:', error);
+          set({ 
+            error: 'Failed to fetch user orders',
+            loading: false 
+          });
         }
       },
       getOrderById: (id) => {
         return get().orders.find(order => order.id === id);
       },
       getUserOrders: (email) => {
-        return get().orders.filter(order => order.customerInfo.email === email);
+        return get().orders.filter(order => 
+          order.customerInfo && order.customerInfo.email === email
+        );
       },
       updateOrderStatus: async (id, status) => {
         try {
           set({ loading: true, error: null });
-          await apiClient.patch(`${ENDPOINTS.ORDERS}/${id}/status`, { status });
+          await orderService.updateOrderStatus(id, status);
           set(state => ({
             orders: state.orders.map(order =>
               order.id === id ? { ...order, status } : order

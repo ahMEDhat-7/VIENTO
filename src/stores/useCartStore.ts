@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { CartItem, Product } from '../types/store';
-import { apiClient, ENDPOINTS } from '../config/api';
+import { cartService } from '../services/cartService';
 
 interface CartState {
   items: CartItem[];
@@ -55,9 +55,9 @@ export const useCartStore = create<CartState>()(
             });
           }
 
-          // Sync with server (optional for cart functionality)
+          // Sync with server
           try {
-            await apiClient.post(`${ENDPOINTS.CART}/add-item?productId=${product.id}&quantity=${quantity}`, {});
+            await cartService.addToCart(product.id, quantity, size, color);
           } catch (error) {
             console.warn('Failed to sync cart with server:', error);
           }
@@ -78,9 +78,9 @@ export const useCartStore = create<CartState>()(
           }));
 
           // Extract productId from the compound id
-          const productId = id.split('-')[0];
+          const [productId, selectedSize, selectedColor] = id.split('-');
           try {
-            await apiClient.delete(`${ENDPOINTS.CART}/remove-item?productId=${productId}`);
+            await cartService.removeFromCart(productId, selectedSize, selectedColor);
           } catch (error) {
             console.warn('Failed to sync cart removal with server:', error);
           }
@@ -119,7 +119,7 @@ export const useCartStore = create<CartState>()(
           set({ items: [] });
           
           try {
-            await apiClient.delete(ENDPOINTS.CART);
+            await cartService.clearCart();
           } catch (error) {
             console.warn('Failed to clear cart on server:', error);
           }
@@ -133,13 +133,11 @@ export const useCartStore = create<CartState>()(
       syncWithServer: async () => {
         try {
           set({ loading: true });
-          const response = await apiClient.get(ENDPOINTS.CART);
-          if (Array.isArray(response)) {
-            set({ items: response });
-          } else if (response && (response as any).items && Array.isArray((response as any).items)) {
-            set({ items: (response as any).items });
-          }
-          set({ loading: false });
+          const serverCart = await cartService.getCart();
+          set({ 
+            items: Array.isArray(serverCart) ? serverCart : [],
+            loading: false 
+          });
         } catch (error) {
           console.error('Failed to sync cart with server:', error);
           set({ loading: false });

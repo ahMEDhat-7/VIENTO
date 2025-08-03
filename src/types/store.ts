@@ -111,9 +111,17 @@ export interface Order {
   userId: string;
   items: OrderItem[];
   total: number;
+  subtotal: number;
+  tax: number;
   paymentMethod: string;
   paymentStatus: "unpaid" | "paid" | "refunded";
   status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
+  customerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+  };
   tracking?: {
     courier: string;
     trackingNumber: string;
