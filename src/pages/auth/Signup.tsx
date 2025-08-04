@@ -65,17 +65,30 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary to-background px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-4 text-center">
-          <div className="flex items-center justify-center space-x-2">
-            <Wind className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
+         style={{ background: 'var(--auth-background)' }}>
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-4 -right-4 w-72 h-72 bg-primary/10 rounded-full animate-blob animation-delay-1000"></div>
+        <div className="absolute -bottom-8 -left-4 w-96 h-96 bg-primary/5 rounded-full animate-blob animation-delay-3000"></div>
+        <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-primary/15 rounded-full animate-float animation-delay-500"></div>
+      </div>
+      
+      <Card className="w-full max-w-md backdrop-blur-sm bg-card/80 border-[var(--glass-border)] shadow-xl">
+        <CardHeader className="space-y-6 text-center">
+          <div className="flex items-center justify-center space-x-3">
+            <div className="relative">
+              <Wind className="h-10 w-10 text-primary animate-float" />
+              <div className="absolute inset-0 h-10 w-10 text-primary/20 animate-pulse"></div>
+            </div>
+            <span className="text-3xl font-bold" style={{ background: 'var(--brand-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               VIENTO
             </span>
           </div>
-          <CardTitle>Create Account</CardTitle>
-          <CardDescription>Join VIENTO and discover premium headwear</CardDescription>
+          <div className="space-y-2">
+            <CardTitle className="text-2xl">Create Account</CardTitle>
+            <CardDescription className="text-muted-foreground">Join VIENTO and discover premium headwear</CardDescription>
+          </div>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
@@ -170,16 +183,31 @@ const Signup: React.FC = () => {
             </div>
           </CardContent>
 
-          <CardFooter className="space-y-4">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating Account...' : 'Create Account'}
+          <CardFooter className="space-y-6">
+            <Button 
+              type="submit" 
+              className="w-full relative overflow-hidden group hover-lift" 
+              disabled={loading}
+              style={{ background: loading ? 'var(--muted)' : 'var(--brand-gradient)' }}
+            >
+              <span className="relative z-10 font-semibold text-primary-foreground">
+                {loading ? 'Creating Account...' : 'Create Account'}
+              </span>
+              {loading && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-gradient-shift"></div>
+              )}
             </Button>
 
-            <div className="text-center text-sm text-muted-foreground">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary hover:underline font-medium">
-                Sign in
-              </Link>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Already have an account?{' '}
+                <Link 
+                  to="/login" 
+                  className="font-medium text-primary hover:underline transition-colors"
+                >
+                  Sign in
+                </Link>
+              </p>
             </div>
           </CardFooter>
         </form>
