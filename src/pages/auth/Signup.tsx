@@ -6,12 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Wind, Mail, Lock, User, AlertCircle } from 'lucide-react';
-import { useAuthStore } from '../../stores/useAuthStore';
+import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
-  const { register } = useAuthStore();
+  const { signUp } = useAuth();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -46,20 +46,16 @@ const Signup: React.FC = () => {
     setLoading(true);
 
     try {
-      const success = await register({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      });
+      const { error } = await signUp(formData.email, formData.password, formData.name);
 
-      if (success) {
+      if (error) {
+        setError(error.message || 'Registration failed. Please try again.');
+      } else {
         toast({
           title: "Account created!",
-          description: "Welcome to VIENTO. Your account has been created successfully.",
+          description: "Welcome to VIENTO. Please check your email for verification.",
         });
-        navigate('/dashboard');
-      } else {
-        setError('Registration failed. Please try again.');
+        navigate('/');
       }
     } catch (error) {
       setError('Registration failed. Please try again.');

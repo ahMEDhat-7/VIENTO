@@ -6,12 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Wind, Mail, Lock, AlertCircle } from 'lucide-react';
-import { useAuthStore } from '../../stores/useAuthStore';
+import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { signIn } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,15 +24,15 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const success = await login(email, password);
-      if (success) {
+      const { error } = await signIn(email, password);
+      if (error) {
+        setError(error.message || 'Invalid email or password');
+      } else {
         toast({
           title: "Welcome back!",
           description: "You have successfully logged in.",
         });
-        navigate('/dashboard');
-      } else {
-        setError('Invalid email or password');
+        navigate('/');
       }
     } catch (error) {
       setError('Login failed. Please try again.');

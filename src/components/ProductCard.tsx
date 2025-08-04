@@ -8,7 +8,7 @@ import { useCartStore } from '../stores/useCartStore';
 import { useProductsStore } from '../stores/useProductsStore';
 import { ShoppingCart, Star, Eye, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProductCardProps {
   product: Product;
@@ -18,7 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { toast } = useToast();
   const { addToCart } = useCartStore();
   const { incrementViews } = useProductsStore();
-  const { isLoggedIn } = useAuthStore();
+  const { user } = useAuth();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -194,7 +194,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <Button
             size="sm"
             onClick={handleAddToCart}
-            disabled={isOutOfStock || !isLoggedIn}
+            disabled={isOutOfStock || !user}
             className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold disabled:opacity-50"
           >
             <ShoppingCart className="w-4 h-4 mr-1" />
