@@ -64,7 +64,7 @@ const Header: React.FC = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <button onClick={toggleCart} className="relative">
+            <div onClick={toggleCart} className="relative cursor-pointer">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
                 {totalItems > 0 && (
@@ -73,7 +73,7 @@ const Header: React.FC = () => {
                   </Badge>
                 )}
               </Button>
-            </button>
+            </div>
 
             {user ? (
               <div className="flex items-center space-x-2">

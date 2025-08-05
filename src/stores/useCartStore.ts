@@ -130,19 +130,20 @@ export const useCartStore = create<CartState>()(
           set({ loading: false });
         }
       },
-  syncWithServer: async () => {
-    try {
-      set({ loading: true });
-      const serverCart = await cartService.getCart();
-      set({ 
-        items: Array.isArray(serverCart) ? serverCart : [],
-        loading: false 
-      });
-    } catch (error) {
-      console.warn('Failed to sync cart with server:', error);
-      set({ loading: false });
-    }
-  },
+      syncWithServer: async () => {
+        try {
+          set({ loading: true });
+          const serverCart = await cartService.getCart();
+          set({ 
+            items: Array.isArray(serverCart) ? serverCart : [],
+            loading: false 
+          });
+        } catch (error) {
+          console.warn('Failed to sync cart with server:', error);
+          // Don't throw error, just log it and continue with local state
+          set({ loading: false });
+        }
+      },
       getSubtotal: () => {
         const { items } = get();
         return items.reduce((total, item) => {

@@ -51,11 +51,6 @@ export interface Product {
   updatedAt: string;
 }
 
-export interface ProductVariant {
-  color: string;
-  size: string;
-  stock: number;
-}
 
 export interface Category {
   id: string;

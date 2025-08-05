@@ -24,8 +24,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const availableVariant = product.variants.find(v => v.stock > 0);
-    if (!availableVariant) {
+    
+    // Check if variants exist and find available stock
+    const availableVariant = product.variants?.find(v => v.stock > 0);
+    if (!product.variants?.length || !availableVariant) {
       toast({
         title: "Out of stock",
         description: "This product is currently out of stock",
@@ -50,7 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     : product.price;
 
   const isOnSale = product.discount && new Date(product.discount.validUntil) > new Date();
-  const totalStock = product.variants.reduce((sum, variant) => sum + variant.stock, 0);
+  const totalStock = product.variants?.reduce((sum, variant) => sum + variant.stock, 0) || 0;
   const isOutOfStock = totalStock === 0 || !product.isAvailable;
 
   return (
@@ -127,7 +129,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-3 h-3 ${i < Math.floor(product.analytics.ratingsCount)
+                  className={`w-3 h-3 ${i < Math.floor(product.analytics.averageRating || 0)
                     ? "text-amber-400 fill-current"
                     : "text-muted-foreground"
                     }`}
@@ -166,7 +168,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {/* Variants preview */}
           <div className="flex items-center gap-1 mb-3">
             <span className="text-xs text-muted-foreground">Colors:</span>
-            {[...new Set(product.variants.map((v) => v.color))]
+            {product.variants && [...new Set(product.variants.map((v) => v.color))]
               .slice(0, 3)
               .map((color) => (
                 <div

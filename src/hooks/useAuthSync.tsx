@@ -10,10 +10,10 @@ export const useAuthSync = () => {
     if (!loading) {
       if (user) {
         // User is logged in, sync cart with server
-        syncWithServer();
+        syncWithServer().catch(console.warn);
       } else {
         // User is logged out, clear cart
-        clearCart();
+        clearCart().catch(console.warn);
       }
     }
   }, [user, loading, syncWithServer, clearCart]);

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product, Category } from '../types/store';
 import { productService } from '../services/productService';
-import { useAuthStore } from './useAuthStore';
 
 interface ProductsState {
   products: Product[];
@@ -41,8 +40,6 @@ export const useProductsStore = create<ProductsState>()(
       addProduct: async (productData) => {
         try {
           set({ loading: true, error: null });
-          // جلب التوكن من useAuthStore مباشرة
-          const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
           const response = await productService.createProduct(productData);
           if (response) {
             await get().fetchProducts(); // Refresh products list
@@ -59,7 +56,6 @@ export const useProductsStore = create<ProductsState>()(
       updateProduct: async (id, updates) => {
         try {
           set({ loading: true, error: null });
-          const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
           const response = await productService.updateProduct(id, updates);
           if (response) {
             await get().fetchProducts(); // Refresh products list
@@ -76,7 +72,6 @@ export const useProductsStore = create<ProductsState>()(
       deleteProduct: async (id) => {
         try {
           set({ loading: true, error: null });
-          const token = require('./useAuthStore').useAuthStore.getState().user?.token || '';
           await productService.deleteProduct(id);
           await get().fetchProducts(); // Refresh products list
           set({ loading: false });

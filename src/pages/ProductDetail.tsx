@@ -35,11 +35,11 @@ const ProductDetail: React.FC = () => {
   }
 
   const availableSizes: string[] = product.variants
-    .map(v => v.size)
-    .filter((s): s is string => typeof s === 'string');
+    ? product.variants.map(v => v.size).filter((s): s is string => typeof s === 'string')
+    : [];
   const availableColors: string[] = product.variants
-    .map(v => v.color)
-    .filter((c): c is string => typeof c === 'string');
+    ? product.variants.map(v => v.color).filter((c): c is string => typeof c === 'string')
+    : [];
 
   React.useEffect(() => {
     if (availableSizes.length > 0) setSelectedSize(String(availableSizes[0]));

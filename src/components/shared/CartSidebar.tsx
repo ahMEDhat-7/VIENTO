@@ -46,8 +46,10 @@ const CartSidebar: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {items.map((item) => (
-                  <div key={item.productId} className="flex items-center space-x-4 border-b border-border pb-4">
+                {items.map((item) => {
+                  const itemId = `${item.productId}-${item.selectedSize || ''}-${item.selectedColor || ''}`;
+                  return (
+                  <div key={itemId} className="flex items-center space-x-4 border-b border-border pb-4">
                     <img
                       src={item.product?.images?.[0] || item.product?.imageUrl}
                       alt={item.product?.name}
@@ -71,7 +73,7 @@ const CartSidebar: React.FC = () => {
                         variant="outline"
                         size="sm"
                         className="h-8 w-8 p-0"
-                        onClick={() => handleUpdateQuantity(item.productId, item.quantity - 1)}
+                        onClick={() => handleUpdateQuantity(itemId, item.quantity - 1)}
                       >
                         <Minus className="h-3 w-3" />
                       </Button>
@@ -82,13 +84,14 @@ const CartSidebar: React.FC = () => {
                         variant="outline"
                         size="sm"
                         className="h-8 w-8 p-0"
-                        onClick={() => handleUpdateQuantity(item.productId, item.quantity + 1)}
+                        onClick={() => handleUpdateQuantity(itemId, item.quantity + 1)}
                       >
                         <Plus className="h-3 w-3" />
                       </Button>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
