@@ -347,7 +347,7 @@ export type Database = {
           address: string | null
           created_at: string
           id: string
-          name: string | null
+          name: string
           phone: string | null
           updated_at: string
         }
@@ -355,7 +355,7 @@ export type Database = {
           address?: string | null
           created_at?: string
           id: string
-          name?: string | null
+          name: string
           phone?: string | null
           updated_at?: string
         }
@@ -363,7 +363,7 @@ export type Database = {
           address?: string | null
           created_at?: string
           id?: string
-          name?: string | null
+          name?: string
           phone?: string | null
           updated_at?: string
         }
