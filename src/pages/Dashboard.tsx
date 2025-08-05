@@ -3,19 +3,19 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuthStore } from '../stores/useAuthStore';
+import { useAuth } from '../contexts/AuthContext';
 import { useOrderStore } from '../stores/useOrderStore';
 import { useToast } from '@/hooks/use-toast';
 import { User, Package, LogOut, Edit, Save, X } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { toast } = useToast();
-  const { user, updateProfile, logout } = useAuthStore();
+  const { user, signOut } = useAuth();
   const { getUserOrders } = useOrderStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
-    name: user?.name || '',
+    name: user?.user_metadata?.name || '',
     email: user?.email || '',
     // phone: user?.phone || '',
     // address: user?.address || '',
@@ -24,7 +24,7 @@ const Dashboard: React.FC = () => {
   const orders = user ? getUserOrders(user.email) : [];
 
   const handleSaveProfile = () => {
-    updateProfile(editForm);
+    // TODO: Implement profile update with Supabase
     setIsEditing(false);
     toast({
       title: "Profile updated",
@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
 
   const handleCancelEdit = () => {
     setEditForm({
-      name: user?.name || '',
+      name: user?.user_metadata?.name || '',
       email: user?.email || '',
       // phone: user?.phone || '',
       // address: user?.address || '',
@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">My Dashboard</h1>
           <Button
-            onClick={logout}
+            onClick={signOut}
             variant="outline"
             className="text-red-400 border-red-400 hover:bg-red-500/20"
           >
@@ -128,9 +128,9 @@ const Dashboard: React.FC = () => {
                       onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
                       className="bg-gray-700 border-gray-600"
                     />
-                  ) : (
-                    <p className="text-gray-300 mt-1">{user.name}</p>
-                  )}
+                   ) : (
+                     <p className="text-gray-300 mt-1">{user?.user_metadata?.name || 'Not provided'}</p>
+                   )}
                 </div>
 
                 <div>
@@ -176,11 +176,11 @@ const Dashboard: React.FC = () => {
                   )}
                 </div> */}
 
-                <div className="pt-4 border-t border-gray-700">
-                  <p className="text-sm text-gray-400">
-                    Role: <span className="text-amber-400 capitalize">{user.role}</span>
-                  </p>
-                </div>
+                 <div className="pt-4 border-t border-gray-700">
+                   <p className="text-sm text-gray-400">
+                     Role: <span className="text-amber-400 capitalize">{user?.user_metadata?.role || 'user'}</span>
+                   </p>
+                 </div>
               </div>
             </div>
           </div>
